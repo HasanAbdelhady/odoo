@@ -58,6 +58,13 @@ class Appointment(models.Model):
 
     def done(self):
         self.status = "done"
+        return {
+            "effect": {
+                "fadeout": "slow",
+                "message": "Appointment Done!",
+                "type": "rainbow_man",
+            }
+        }
 
     def cancel_appointment(self):
         self.status = "canceled"
