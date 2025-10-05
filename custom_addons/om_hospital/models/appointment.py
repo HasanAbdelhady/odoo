@@ -40,7 +40,7 @@ class Appointment(models.Model):
             ("draft", "Draft"),
             ("in_consultation", "In Consultation"),
             ("done", "Done"),
-            ("canceled", "Canceled"),
+            ("cancelled", "Cancelled"),
         ],
         default="draft",
         required=True,
@@ -67,4 +67,4 @@ class Appointment(models.Model):
         }
 
     def cancel_appointment(self):
-        self.status = "canceled"
+        self.status = "cancelled"

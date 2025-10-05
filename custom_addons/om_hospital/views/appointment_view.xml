@@ -5,12 +5,12 @@
     <field name="name">hospital.appointment.list</field>
     <field name="model">hospital.appointment</field>
     <field name="arch" type="xml">
-      <list>
+      <list decoration-danger="status == 'cancelled'" decoration-muted="status == 'draft'" decoration-success="status == 'done'" decoration-warning="status == 'in_consultation'">
         <field name="patient_id" width="200"/>
         <field name="appointment_time" width="200"/>
         <field name="booking_date" width="200"/>
         <field name="priority" width="100"/>
-        <field name="status" width="100"/>
+        <field decoration-danger="status == 'cancelled'" decoration-muted="status == 'draft'" decoration-success="status == 'done'" decoration-warning="status == 'in_consultation'" name="status" widget="badge" width="100"/>
       </list>
     </field>
   </record>
@@ -82,7 +82,9 @@
     <field name="name">om_hospital.appointment.search</field>
     <field name="model">hospital.appointment</field>
     <field name="arch" type="xml">
-      <search string="Search appointments"/>
+      <search string="Search appointments">
+        <filter context="{'group_by': 'status'}" name="group_by_status" string="Status"/>
+      </search>
     </field>
   </record>
   <!-- appointment Action -->
