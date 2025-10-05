@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "category": "Gym Management",
     "description": "Gym Management",
-    "sequence": -101,
+    "sequence": -99,
     "depends": ["mail"],
     "data": [
         "security/ir.model.access.csv",
