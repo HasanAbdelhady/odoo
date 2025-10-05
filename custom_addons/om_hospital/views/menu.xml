@@ -1,5 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_hospital_root" name="Hospital" sequence="0" web_icon="om_hospital,static/description/icon.png"/>
-    <menuitem id="menu_hospital_patient_details" name="Patient Details" parent="menu_hospital_root" action="hospital_patient_action" sequence="0"/>
-    <menuitem id="menu_hospital_hasan_linkedin" name="Hasan LinkedIn" parent="menu_hospital_root" action="hasan_linkedin" sequence="1"/>
+  <menuitem id="menu_hospital_root" name="Hospital" sequence="0" web_icon="om_hospital,static/description/icon.png"/>
+  <menuitem id="menu_hospital_patient_details" name="Patient Details" parent="menu_hospital_root" sequence="0"/>
+  <menuitem action="om_hospital_patient_action" id="menu_hospital_patient" name="Patient" parent="menu_hospital_patient_details" sequence="0"/>
+  <menuitem action="hospital_children_patients_action" id="menu_hospital_child_patient" name="Children Patients" parent="menu_hospital_patient_details" sequence="1"/>
+  <menuitem action="hostpital_female_patients_action" id="menu_hospital_femaile_patient" name="Female Patients" parent="menu_hospital_patient_details" sequence="2"/>
+  <menuitem action="om_hospital_appointment_action" id="menu_hospital_appointment" name="Appointments" parent="menu_hospital_root" sequence="1"/>
+  <menuitem action="om_hospital_hasan_linkedin_action" id="menu_hospital_hasan_linkedin" name="Hasan LinkedIn" parent="menu_hospital_root" sequence="2"/>
 </odoo>

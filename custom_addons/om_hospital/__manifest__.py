@@ -1,19 +1,22 @@
-
-{   
-    'name': 'Hospital Management',
-    'version': '1.0.0',
-    'category': 'Hospital Management',
-    'description': 'Hospital Management',
-    'sequence':-100,
-    'depends':[],
-    'data':[
+{
+    "name": "Hospital Management",
+    "version": "1.0.0",
+    "category": "Hospital Management",
+    "description": "Hospital Management",
+    "sequence": -100,
+    "depends": ["mail"],
+    "data": [
         "security/ir.model.access.csv",
-        "views/patient_views.xml",
-        "views/menu.xml"
+        "views/appointment_view.xml",
+        "views/patient_view.xml",
+        "views/children_patients_view.xml",
+        "views/female_patients_view.xml",
+        "views/patient_view.xml",
+        "views/menu.xml",
     ],
-    'demo':[],
-    'application':True,
-    'installable':True,
-    'auto_install':False,
-    'license':'LGPL-3',
+    "demo": [],
+    "application": True,
+    "installable": True,
+    "auto_install": False,
+    "license": "LGPL-3",
 }
