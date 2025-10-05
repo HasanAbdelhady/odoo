@@ -1,5 +1,6 @@
 from datetime import date
 from odoo import models, fields, api
+from dateutil.relativedelta import relativedelta
 
 # from odoo.exceptions import ValidationError
 
@@ -12,7 +13,7 @@ class Patient(models.Model):
     name = fields.Char(string="Name", required=True, tracking=True)
     birthday = fields.Date(string="birthday", required=True)
     # age is currently a non-stored computed field
-    age = fields.Integer(string="Age", compute="_compute_age", tracking=True)
+    age = fields.Char(string="Age", compute="_compute_age", tracking=True)
     gender = fields.Selection(
         string="Gender",
         selection=[("male", "Male"), ("female", "Female")],
@@ -42,16 +43,24 @@ class Patient(models.Model):
         for record in self:
             if record.birthday:
                 today = date.today()
-                record.age = (
-                    today.year
-                    - record.birthday.year
-                    - (
-                        (today.month, today.day)
-                        < (record.birthday.month, record.birthday.day)
-                    )
-                )
+                delta = relativedelta(today, record.birthday)
+
+                years = delta.years
+                months = delta.months
+                days = delta.days
+
+                # Build a readable string, e.g. "23 years, 4 months, 12 days"
+                parts = []
+                if years:
+                    parts.append(f"{years} year{'s' if years != 1 else ''}")
+                if months:
+                    parts.append(f"{months} month{'s' if months != 1 else ''}")
+                if days:
+                    parts.append(f"{days} day{'s' if days != 1 else ''}")
+
+                record.age = ", ".join(parts) if parts else "0 days"
             else:
-                record.age = 0
+                record.age = "0 days"
 
     # @api.constrains("age_years", "age_months", "age_days")
     # def _check_age_not_zero(self):
