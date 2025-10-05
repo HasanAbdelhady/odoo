@@ -29,7 +29,6 @@ class Appointment(models.Model):
     ref = fields.Char(string="Reference", readonly=True)
     prescription = fields.Html(
         string="prescription",
-        tracking=True,
     )
     priority = fields.Selection(
         [("0", "Normal"), ("1", "Low"), ("2", "Medium"), ("3", "High")],
