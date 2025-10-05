@@ -5,24 +5,41 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: odoo
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - odoo-db-data:/var/lib/postgresql/data
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U odoo" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   odoo:
     build: .
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "8069:8069"
-    
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+      PROXY_MODE: 1
+      LIST_DB: False
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons/custom_addons
       - ./odoo-docker.conf:/etc/odoo/odoo.conf
-    
+
     restart: unless-stopped
-    command: ["odoo", "-c", "/etc/odoo/odoo.conf"]
+    command: [ "odoo", "-c", "/etc/odoo/odoo.conf" ]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8069/web/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   # Nginx reverse proxy for public access
   # nginx:
   #   image: nginx:alpine

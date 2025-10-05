@@ -106,6 +106,6 @@
   <record id="om_hospital_hasan_linkedin_action" model="ir.actions.act_url">
     <field name="name">Hasan's LinkedIn</field>
     <field name="url">https://linkedin.com/in/hasan-abdelhady</field>
-    <field name="target">new</>
+    <field name="target">new</field>
   </record>
 </odoo>

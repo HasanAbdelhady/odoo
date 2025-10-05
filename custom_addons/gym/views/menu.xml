@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <menuitem id="menu_gym_root" name="gym" sequence="0" web_icon="gym,static/description/icon.png"/>
-  <menuitem id="menu_gym" name="People Details" parent="menu_gym_root" sequence="0"/>
+  <menuitem id="menu_gym" name="Gym Members" parent="menu_gym_root" sequence="0"/>
   <menuitem action="gym_trainer_action" id="menu_gym_trainer" name="Trainer" parent="menu_gym" sequence="0"/>
   <menuitem action="gym_trainee_action" id="menu_gym_trainee" name="Trainee" parent="menu_gym" sequence="1"/>
 </odoo>
