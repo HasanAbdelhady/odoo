@@ -1,8 +1,7 @@
 from datetime import date
 from odoo import models, fields, api
 from dateutil.relativedelta import relativedelta
-
-# from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError
 
 
 class Patient(models.Model):
@@ -61,6 +60,12 @@ class Patient(models.Model):
                 record.age = ", ".join(parts) if parts else "0 days"
             else:
                 record.age = "0 days"
+
+    @api.constrains("birthday")
+    def _check_birthday(self):
+        for record in self:
+            if record.birthday and record.birthday > date.today():
+                raise ValidationError("Birthday cannot be in the future.")
 
     # @api.constrains("age_years", "age_months", "age_days")
     # def _check_age_not_zero(self):
