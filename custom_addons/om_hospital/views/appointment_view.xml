@@ -47,7 +47,7 @@
             </group>
             <group>
               <field name="appointment_time"/>
-              <button confirm="Are you sure you want to go to Patients?" help="Go to patients menu" name="%(om_hospital.om_hospital_patient_action)d" string="Patients Menu" type="action"/>
+              <button confirm="Are you sure you want to go to Patients?" help="Go to patients menu" name="%(om_hospital_patient_action)d" string="Patients Menu" type="action"/>
             </group>
           </group>
           <notebook>

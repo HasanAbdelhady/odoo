@@ -7,11 +7,10 @@
     "depends": ["mail", "product"],
     "data": [
         "security/ir.model.access.csv",
-        "views/appointment_view.xml",
         "views/patient_view.xml",
         "views/children_patients_view.xml",
         "views/female_patients_view.xml",
-        "views/patient_view.xml",
+        "views/appointment_view.xml",
         "views/menu.xml",
     ],
     "demo": [],
