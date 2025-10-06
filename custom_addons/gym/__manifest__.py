@@ -7,7 +7,7 @@
     "depends": ["mail"],
     "data": [
         "security/ir.model.access.csv",
-        "views/trainer_view.xml",
+        "views/coach_view.xml",
         "views/trainee_view.xml",
         "views/menu.xml",
     ],

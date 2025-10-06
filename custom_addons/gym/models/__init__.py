@@ -1,1 +1,1 @@
-from . import trainee, trainer
+from . import trainee, coach
