@@ -11,13 +11,13 @@ class trainer(models.Model):
     trainer_id = fields.Integer(string="Trainer ID", required=True, tracking=True)
     phone_number = fields.Char(string="Phone Number", required=True, unique=True)
 
-    trainee_ids = fields.One2many(
-        comodel_name="gym.trainee", inverse_name="trainer_name", string="Trainees"
-    )
-
-    trainee_count = fields.Integer(
-        string="Number of Trainees", compute="_compute_trainee_count"
-    )
+    # trainee_ids = fields.One2many(
+    #     comodel_name="gym.trainee", inverse_name="trainer_name", string="Trainees"
+    # )
+    #
+    # trainee_count = fields.Integer(
+    #     string="Number of Trainees", compute="_compute_trainee_count"
+    # )
 
     _sql_constraints = [
         ("unique_trainer_id", "unique(trainer_id)", "The trainer ID must be unique!"),
@@ -27,12 +27,3 @@ class trainer(models.Model):
             "The trainer's phone number must be unique!",
         ),
     ]
-
-    @api.depends("trainee_ids")
-    def _compute_trainee_count(self):
-        for trainer in self:
-            trainer.trainee_count = sum(
-                1
-                for trainee in trainer.trainee_ids
-                if trainee.trainer_name.id == trainer.id
-            )
