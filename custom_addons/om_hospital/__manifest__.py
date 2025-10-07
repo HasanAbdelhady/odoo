@@ -4,7 +4,7 @@
     "category": "Hospital Management",
     "description": "Hospital Management",
     "sequence": -100,
-    "depends": ["mail"],
+    "depends": ["mail", "product"],
     "data": [
         "security/ir.model.access.csv",
         "views/appointment_view.xml",

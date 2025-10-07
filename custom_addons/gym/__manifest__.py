@@ -9,6 +9,8 @@
         "security/ir.model.access.csv",
         "views/coach_view.xml",
         "views/trainee_view.xml",
+        "views/membership_view.xml",
+        "views/session_view.xml",
         "views/menu.xml",
     ],
     "demo": [],

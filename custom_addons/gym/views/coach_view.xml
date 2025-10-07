@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <!-- coach Tree View -->
+  <!-- coach list View -->
   <record id="gym_coach_list_view" model="ir.ui.view">
     <field name="name">gym.coach.list</field>
     <field name="model">gym.coach</field>
@@ -9,6 +9,7 @@
         <field class="oe_avatar" name="coach_image" options="{'size': [50, 50]}" widget="image"/>
         <field name="name"/>
         <field name="phone_number"/>
+        <field name="schedule_ids"/>
       </list>
     </field>
   </record>
@@ -35,6 +36,18 @@
             </group>
             <group/>
           </group>
+          <notebook>
+            <page name="schedule" string="Weekly Schedule">
+              <field name="schedule_ids">
+                <list editable="bottom">
+                  <field name="day_of_week"/>
+                  <field name="time_from" widget="float_time"/>
+                  <field name="time_to" widget="float_time"/>
+                  <field name="time_display"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
         </sheet>
         <chatter/>
       </form>

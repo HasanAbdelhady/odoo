@@ -1,1 +1,1 @@
-from . import trainee, coach
+from . import trainee, coach, membership, session

@@ -1,86 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <!-- coach Tree View -->
-  <record id="gym_coach_list_view" model="ir.ui.view">
+  <!-- membership Tree View -->
+  <record id="gym_membership_list_view" model="ir.ui.view">
     <field name="name">gym.membership.list</field>
-    <field name="model">gym.coach</field>
+    <field name="model">gym.membership</field>
     <field name="arch" type="xml">
       <list>
-        <field class="oe_avatar" name="coach_image" options="{'size': [50, 50]}" widget="image"/>
-        <field name="name"/>
-        <field name="phone_number"/>
-        <field name="trainee_count"/>
+        <field name="coach_id"/>
+        <field name="coach_image" options="{'size': [50, 50]}" string="Coach Photo" widget="image"/>
+        <field name="coach_phone" string="Coach Phone"/>
+        <field name="trainee_id"/>
+        <field name="trainee_image" options="{'size': [50, 50]}" string="Trainee Photo" widget="image"/>
+        <field name="trainee_phone" string="Trainee Phone"/>
       </list>
     </field>
   </record>
-  <!-- coach Form View -->
-  <record id="gym_coach_form_view" model="ir.ui.view">
-    <field name="name">gym.coach.form</field>
-    <field name="model">gym.coach</field>
+  <!-- membership Form View -->
+  <record id="gym_membership_form_view" model="ir.ui.view">
+    <field name="name">gym.membership.form</field>
+    <field name="model">gym.membership</field>
     <field name="arch" type="xml">
       <form>
         <sheet>
-          <!-- Avatar in top-left corner -->
-          <field class="oe_avatar" name="coach_image" options="{'preview_image': 'coach_image', 'size': [90, 90]}" widget="image"/>
-          <!-- Title section -->
-          <div class="oe_title">
-            <h1>
-              <field name="name" placeholder="coach Name"/>
-            </h1>
-          </div>
-          <!-- Form fields -->
           <group>
             <group>
               <field name="coach_id"/>
-              <field name="phone_number"/>
+              <field name="coach_image" options="{'size': [50, 50]}" string="Coach Photo" widget="image"/>
+              <field name="coach_phone" string="Coach Phone"/>
             </group>
             <group>
-              <field name="trainee_count"/>
+              <field name="trainee_id"/>
+              <field name="trainee_image" options="{'size': [50, 50]}" string="Trainee Photo" widget="image"/>
+              <field name="trainee_phone" string="Trainee Phone"/>
             </group>
           </group>
-          <!-- Trainees list in notebook -->
-          <notebook>
-            <page name="trainees" string="Trainees">
-              <field name="trainee_ids">
-                <list editable="bottom">
-                  <field name="name"/>
-                  <field name="trainee_id"/>
-                  <field name="phone_number"/>
-                </list>
-              </field>
-            </page>
-          </notebook>
         </sheet>
         <chatter/>
       </form>
     </field>
   </record>
-  <record id="gym_coach_kanban_view" model="ir.ui.view">
-    <field name="name">gym.coach.kanban</field>
-    <field name="model">gym.coach</field>
+  <record id="gym_membership_kanban_view" model="ir.ui.view">
+    <field name="name">gym.membership.kanban</field>
+    <field name="model">gym.membership</field>
     <field name="arch" type="xml">
       <kanban>
         <templates>
           <t t-name="card">
             <div class="oe_kanban_global_click">
-              <strong class="o_kanban_record_title">
-                <field class="oe_avatar" name="coach_image" options="{'size': [50, 50]}" widget="image"/>
-                <field name="name"/>
-              </strong>
-              <div class="o_kanban_record_body">Phone Number: <field name="phone_number"/> <br/> coach ID: <field name="coach_id"/> <br/> Trainees Count: <field name="trainee_count"/></div>
+              <strong class="o_kanban_record_title">Coach: <field name="coach_id"/> <br/> Trainee: <field name="trainee_id"/></strong>
             </div>
           </t>
         </templates>
       </kanban>
     </field>
   </record>
-  <!-- coach Action -->
-  <record id="gym_coach_action" model="ir.actions.act_window">
-    <field name="name">coachs</field>
-    <field name="res_model">gym.coach</field>
+  <!-- membership Action -->
+  <record id="gym_membership_action" model="ir.actions.act_window">
+    <field name="name">Memberships</field>
+    <field name="res_model">gym.membership</field>
     <field name="view_mode">list,form,kanban</field>
     <field name="help" type="html">
-      <p class="o_view_nocontent_smiling_face">Add your first coach!</p>
+      <p class="o_view_nocontent_smiling_face">Add your first membership!</p>
     </field>
   </record>
 </odoo>
