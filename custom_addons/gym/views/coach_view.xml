@@ -9,6 +9,8 @@
         <field class="oe_avatar" name="coach_image" options="{'size': [50, 50]}" widget="image"/>
         <field name="name"/>
         <field name="phone_number"/>
+        <field name="coach_cost_per_hour_normal"/>
+        <field name="coach_cost_per_hour_overtime"/>
         <field name="schedule_ids"/>
       </list>
     </field>
@@ -34,7 +36,10 @@
               <field name="coach_id"/>
               <field name="phone_number"/>
             </group>
-            <group/>
+            <group>
+              <field name="coach_cost_per_hour_normal"/>
+              <field name="coach_cost_per_hour_overtime"/>
+            </group>
           </group>
           <notebook>
             <page name="schedule" string="Weekly Schedule">

@@ -80,8 +80,8 @@ class Coach(models.Model):
         string="Weekly Schedule",
     )
 
-    coach_cost_per_hour_normal = fields.Float(string="Coach Cost Per Hour (in time)")
-    coach_cost_per_hour_overtime = fields.Float(string="Coach Cost Per Hour (Overtime)")
+    coach_cost_per_hour_normal = fields.Float(string="Coach Cost Per Hour (in time)", default=200)
+    coach_cost_per_hour_overtime = fields.Float(string="Coach Cost Per Hour (Overtime)", default=250)
     _sql_constraints = [
         ("unique_coach_id", "unique(coach_id)", "The coach ID must be unique!"),
         (
