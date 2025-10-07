@@ -44,13 +44,28 @@ class Session(models.Model):
     )
 
     # will compute it using the time of the session later
-    session_cost = fields.Float(string="Session Cost", compute="_compute_session_cost", store=True, readonly=True)
-    in_time = fields.Boolean(string="In time?", compute="_compute_session_cost", store=True)
-    out_time = fields.Boolean(string="Overtime?", compute="_compute_session_cost", store=True)
+    session_cost = fields.Float(
+        string="Session Cost",
+        compute="_compute_session_cost",
+        store=True,
+        readonly=True,
+    )
+    in_time = fields.Boolean(
+        string="In time?", compute="_compute_session_cost", store=True
+    )
+    out_time = fields.Boolean(
+        string="Overtime?", compute="_compute_session_cost", store=True
+    )
     is_attended_by_coach = fields.Boolean(string="Did the coach attend?")
     is_attended_by_trainee = fields.Boolean(string="Did the trainee attend?")
-    coach_cost_per_hour_normal = fields.Float(related="coach_id.coach_cost_per_hour_normal", string="Coach Cost Per Hour (in time)")
-    coach_cost_per_hour_overtime = fields.Float(related="coach_id.coach_cost_per_hour_overtime", string="Coach Cost Per Hour (Overtime)")
+    coach_cost_per_hour_normal = fields.Float(
+        related="coach_id.coach_cost_per_hour_normal",
+        string="Coach Cost Per Hour (in time)",
+    )
+    coach_cost_per_hour_overtime = fields.Float(
+        related="coach_id.coach_cost_per_hour_overtime",
+        string="Coach Cost Per Hour (Overtime)",
+    )
 
     @api.depends("coach_name", "trainee_name", "trainee_phone")
     def _set_session_title(self):
@@ -62,88 +77,88 @@ class Session(models.Model):
             else:
                 self.session_title = ""
 
-    @api.depends("session_start_time", "session_end_time", "coach_id", "coach_id.schedule_ids", "coach_cost_per_hour_normal", "coach_cost_per_hour_overtime")
+    @api.depends(
+        "session_start_time",
+        "session_end_time",
+        "coach_id",
+        "coach_id.schedule_ids",
+        "coach_cost_per_hour_normal",
+        "coach_cost_per_hour_overtime",
+    )
     def _compute_session_cost(self):
         for record in self:
-            if not record.session_start_time or not record.session_end_time or not record.coach_id:
-                record.session_cost = 0.0
-                record.in_time = False
-                record.out_time = False
+            # Default values
+            record.session_cost = 0.0
+            record.in_time = False
+            record.out_time = False
+
+            if not (
+                record.session_start_time
+                and record.session_end_time
+                and record.coach_id
+            ):
                 continue
 
-            # Get user's timezone (or default to UTC)
-            user_tz = pytz.timezone(self.env.user.tz or 'UTC')
-            
-            # Convert session times from UTC to user's local timezone
-            # Odoo stores datetime in UTC, but schedules are in local time
-            session_start_local = pytz.utc.localize(record.session_start_time).astimezone(user_tz)
-            session_end_local = pytz.utc.localize(record.session_end_time).astimezone(user_tz)
-            
-            # Get session day of week (Monday = 0, Sunday = 6)
-            session_day = session_start_local.weekday()
-            day_names = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-            session_day_name = day_names[session_day]
-
-            # Convert session times to float hours (0-24) in LOCAL timezone
-            # Example: 14:30 becomes 14.5 (14 hours + 30/60 minutes)
-            session_start_hour = session_start_local.hour + session_start_local.minute / 60.0
-            session_end_hour = session_end_local.hour + session_end_local.minute / 60.0
-
-            # Calculate total session duration in hours
-            session_duration = (record.session_end_time - record.session_start_time).total_seconds() / 3600.0
-
-            # Find the coach's schedule for this specific day
-            # We use filtered() to pick the schedule that matches the session day
-            coach_schedule = record.coach_id.schedule_ids.filtered(
-                lambda schedule: schedule.day_of_week == session_day_name
+            # Convert UTC times to user's local timezone (coach schedule is in local time)
+            user_tz = pytz.timezone(self.env.user.tz or "Africa/Cairo")
+            session_start_local = pytz.utc.localize(
+                record.session_start_time
+            ).astimezone(user_tz)
+            session_end_local = pytz.utc.localize(record.session_end_time).astimezone(
+                user_tz
             )
 
-            normal_hours = 0.0
-            overtime_hours = 0.0
+            # Get session info in local time
+            session_start_hour = (
+                session_start_local.hour + session_start_local.minute / 60.0
+            )
+            session_end_hour = session_end_local.hour + session_end_local.minute / 60.0
+            session_duration = (
+                record.session_end_time - record.session_start_time
+            ).total_seconds() / 3600.0
 
-            # Take the first schedule if one exists for this day
-            if coach_schedule:
-                coach_schedule = coach_schedule[0]  # Get the first schedule
-                # Check if session falls within coach's scheduled time
-                schedule_start = coach_schedule.time_from
-                schedule_end = coach_schedule.time_to
+            # Get day of week (in local time)
+            # Python weekday(): Mon=0, Tue=1, Wed=2, Thu=3, Fri=4, Sat=5, Sun=6
+            # We want: Sat=0, Sun=1, Mon=2, Tue=3, Wed=4, Thu=5, Fri=6
+            # So we shift: (weekday + 2) % 7
+            day_names = [
+                "saturday",
+                "sunday",
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+            ]
+            session_day_index = (session_start_local.weekday() + 2) % 7
+            session_day_name = day_names[session_day_index]
 
-                # Calculate the overlap between session time and schedule time
-                # Example: Session 8-10, Schedule 9-17 → overlap is 9-10 (1 hour)
-                overlap_start = max(session_start_hour, schedule_start)
-                overlap_end = min(session_end_hour, schedule_end)
+            # Find coach's schedule for this day
+            schedule = record.coach_id.schedule_ids.filtered(
+                lambda s: s.day_of_week == session_day_name
+            )
 
-                if overlap_start < overlap_end:
-                    # There is overlap - this is normal time
-                    normal_hours = overlap_end - overlap_start
+            if schedule:
+                schedule = schedule[0]
+                # Calculate overlap
+                overlap_start = max(session_start_hour, schedule.time_from)
+                overlap_end = min(session_end_hour, schedule.time_to)
+                normal_hours = max(0, overlap_end - overlap_start)
+                overtime_hours = session_duration - normal_hours
 
-                # Calculate overtime (parts of session outside the schedule)
-                
-                # Part 1: Session starts before the schedule
-                # Example: Session 8-10, Schedule 9-17 → 8-9 is overtime (1 hour)
-                if session_start_hour < schedule_start:
-                    overtime_hours += min(session_end_hour, schedule_start) - session_start_hour
-
-                # Part 2: Session ends after the schedule
-                # Example: Session 16-18, Schedule 9-17 → 17-18 is overtime (1 hour)
-                if session_end_hour > schedule_end:
-                    overtime_hours += session_end_hour - max(session_start_hour, schedule_end)
-
-                # Set flags to indicate if there's normal time or overtime
                 record.in_time = normal_hours > 0
                 record.out_time = overtime_hours > 0
             else:
-                # No schedule found for this day - all time is overtime
-                # Example: Coach doesn't work on Sundays, but session is on Sunday
+                # No schedule = all overtime
+                normal_hours = 0
                 overtime_hours = session_duration
-                record.in_time = False
                 record.out_time = True
 
-            # Calculate total cost: normal hours + overtime hours
-            # Example: 2 hours normal ($200/hr) + 1 hour overtime ($250/hr) = $650
-            normal_cost = normal_hours * record.coach_cost_per_hour_normal
-            overtime_cost = overtime_hours * record.coach_cost_per_hour_overtime
-            record.session_cost = normal_cost + overtime_cost
+            # Calculate cost
+            record.session_cost = (
+                normal_hours * record.coach_cost_per_hour_normal
+                + overtime_hours * record.coach_cost_per_hour_overtime
+            )
 
     @api.constrains("session_time")
     def _check_session_time_validity(self):

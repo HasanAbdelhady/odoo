@@ -100,9 +100,9 @@
   
   <!-- session Action -->
   <record id="gym_session_action" model="ir.actions.act_window">
-    <field name="name">sessions</field>
+    <field name="name">Sessions</field>
     <field name="res_model">gym.session</field>
-    <field name="view_mode">calendar,list,form,kanban</field>
+    <field name="view_mode">list,calendar,form,kanban</field>
     <field name="context">{'search_default_filter_today': 1}</field>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">Add your first session!</p>

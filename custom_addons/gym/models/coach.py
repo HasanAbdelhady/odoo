@@ -12,27 +12,19 @@ class CoachSchedule(models.Model):
     )
     day_of_week = fields.Selection(
         [
+            ("saturday", "Saturday"),
+            ("sunday", "Sunday"),
             ("monday", "Monday"),
             ("tuesday", "Tuesday"),
             ("wednesday", "Wednesday"),
             ("thursday", "Thursday"),
             ("friday", "Friday"),
-            ("saturday", "Saturday"),
-            ("sunday", "Sunday"),
         ],
         string="Day of Week",
         required=True,
     )
     time_from = fields.Float(string="From", required=True, help="Start time")
     time_to = fields.Float(string="To", required=True, help="End time")
-
-    _sql_constraints = [
-        (
-            "unique_coach_schedule",
-            "unique(coach_id, day_of_week, time_from)",
-            "The coach schedule must be unique!",
-        ),
-    ]
 
     time_display = fields.Char(
         string="Time", compute="_compute_time_display", store=True
@@ -46,9 +38,7 @@ class CoachSchedule(models.Model):
                 from_min = int((record.time_from % 1) * 60)
                 to_hour = int(record.time_to)
                 to_min = int((record.time_to % 1) * 60)
-                record.time_display = (
-                    f"{from_hour:02d}:{from_min:02d} - {to_hour:02d}:{to_min:02d}"
-                )
+                record.time_display = f"{from_hour:02d}:{from_min:02d} - {to_hour:02d}:{to_min:02d} ({record.time_to - record.time_from} Hours)"
             else:
                 record.time_display = ""
 
@@ -80,8 +70,12 @@ class Coach(models.Model):
         string="Weekly Schedule",
     )
 
-    coach_cost_per_hour_normal = fields.Float(string="Coach Cost Per Hour (in time)", default=200)
-    coach_cost_per_hour_overtime = fields.Float(string="Coach Cost Per Hour (Overtime)", default=250)
+    coach_cost_per_hour_normal = fields.Float(
+        string="Coach Cost Per Hour (in time)", default=200
+    )
+    coach_cost_per_hour_overtime = fields.Float(
+        string="Coach Cost Per Hour (Overtime)", default=250
+    )
     _sql_constraints = [
         ("unique_coach_id", "unique(coach_id)", "The coach ID must be unique!"),
         (
