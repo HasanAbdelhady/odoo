@@ -46,7 +46,7 @@
               <field name="doctor_id" widget="many2one_avatar_user"/>
             </group>
             <group>
-              <field name="appointment_time"/>
+              <field groups="base.group_no_one" name="hide_sales_price" widget="boolean_toggle"/>
               <button confirm="Are you sure you want to go to Patients?" help="Go to patients menu" name="%(om_hospital_patient_action)d" string="Patients Menu" type="action"/>
             </group>
           </group>
@@ -60,16 +60,15 @@
               <field name="pharmacy_line_ids">
                 <list editable="bottom">
                   <field name="product_id"/>
-                  <field name="unit_price"/>
-                  <field name="qty"/>
-                  <field name="total_price"/>
+                  <field column_invisible="parent.hide_sales_price == True" name="unit_price"/>
+                  <field column_invisible="parent.hide_sales_price == True" name="qty"/>
+                  <field column_invisible="parent.hide_sales_price == True" name="total_price"/>
                 </list>
                 <form>
                   <group>
-                    <field name="product_id"/>
-                    <field name="unit_price"/>
-                    <field name="qty"/>
-                    <field name="total_price"/>
+                    <field column_invisible="parent.hide_sales_price == True" name="unit_price"/>
+                    <field column_invisible="parent.hide_sales_price == True" name="qty"/>
+                    <field column_invisible="parent.hide_sales_price == True" name="total_price"/>
                   </group>
                 </form>
               </field>
@@ -115,11 +114,30 @@
       </search>
     </field>
   </record>
+  <record id="hospital_appointment_activity_view" model="ir.ui.view">
+    <field name="name">om_hospital.appointment.activity</field>
+    <field name="model">hospital.appointment</field>
+    <field name="arch" type="xml">
+      <activity string="Appointments">
+        <field name="patient_id"/>
+        <templates>
+          <div t-name="activity-box">
+            <div>
+              <field name="patient_id"/>
+            </div>
+            <div>
+              <field name="status" widget="badge"/>
+            </div>
+          </div>
+        </templates>
+      </activity>
+    </field>
+  </record>
   <!-- appointment Action -->
   <record id="om_hospital_appointment_action" model="ir.actions.act_window">
     <field name="name">appointments</field>
     <field name="res_model">hospital.appointment</field>
-    <field name="view_mode">list,form,kanban</field>
+    <field name="view_mode">list,form,kanban,activity</field>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">Create your first appointment!</p>
     </field>

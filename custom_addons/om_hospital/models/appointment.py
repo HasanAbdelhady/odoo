@@ -53,6 +53,7 @@ class Appointment(models.Model):
         inverse_name="appointment_id",
         string="Phramacy Lines",
     )
+    hide_sales_price = fields.Boolean(string="Hide sales price")
 
     @api.onchange("patient_id")
     def on_change(self):

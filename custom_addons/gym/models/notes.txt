@@ -1,0 +1,10 @@
+How to calc session cost:
+Our Variables:
+Session start time (day + time)
+Session end time (day + time)
+
+if day not in coach_days:
+    the whole session will use overtime
+else:
+    check time:
+        if 

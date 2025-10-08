@@ -15,8 +15,8 @@
         <field name="trainee_phone" string="Trainee Phone"/>
         <field name="session_start_time" string="Session Start Time"/>
         <field name="session_end_time" string="Session End Time"/>
-        <field name="is_attended_by_coach"/>
-        <field name="is_attended_by_trainee"/>
+        <field name="is_attended_by_coach" widget="boolean_toggle"/>
+        <field name="is_attended_by_trainee" widget="boolean_toggle"/>
       </list>
     </field>
   </record>
@@ -45,8 +45,8 @@
               <field name="trainee_phone" string="Trainee Phone"/>
             </group>
             <group>
-              <field name="is_attended_by_coach"/>
-              <field name="is_attended_by_trainee"/>
+              <field name="is_attended_by_coach" widget="boolean_toggle"/>
+              <field name="is_attended_by_trainee" widget="boolean_toggle"/>
             </group>
           </group>
         </sheet>
@@ -69,35 +69,32 @@
       </kanban>
     </field>
   </record>
-  
   <!-- session Calendar View -->
   <record id="gym_session_calendar_view" model="ir.ui.view">
     <field name="name">gym.session.calendar</field>
     <field name="model">gym.session</field>
     <field name="arch" type="xml">
-      <calendar date_start="session_start_time" date_stop="session_end_time" string="Session Calendar" mode="month" color="coach_id">
+      <calendar color="coach_id" date_start="session_start_time" date_stop="session_end_time" event_open_popup="true" mode="month" quick_create="1" string="Session Calendar">
         <field name="session_title"/>
         <field name="coach_id"/>
         <field name="trainee_id"/>
       </calendar>
     </field>
   </record>
-  
   <!-- session Search View -->
   <record id="gym_session_search_view" model="ir.ui.view">
     <field name="name">gym.session.search</field>
     <field name="model">gym.session</field>
     <field name="arch" type="xml">
       <search>
-        <field name="session_title"/>
+        <field avatar_field="avatar_128" name="session_title"/>
         <field name="coach_id"/>
         <field name="trainee_id"/>
-        <filter name="filter_today" string="Today's Sessions" domain="[('session_start_time', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('session_start_time', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+        <filter domain="[('session_start_time', '>=', context_today().strftime('%Y-%m-%d 00:00:00')), ('session_start_time', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]" name="filter_today" string="Today's Sessions"/>
         <separator/>
       </search>
     </field>
   </record>
-  
   <!-- session Action -->
   <record id="gym_session_action" model="ir.actions.act_window">
     <field name="name">Sessions</field>

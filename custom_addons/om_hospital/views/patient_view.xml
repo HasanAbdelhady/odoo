@@ -7,6 +7,7 @@
     <field name="arch" type="xml">
       <list>
         <field name="name"/>
+        <field class="oe_avatar" name="image" options="{'size': [50, 50]}" widget="image"/>
         <field name="birthday"/>
         <field name="gender"/>
         <field name="age"/>
@@ -25,6 +26,7 @@
     <field name="arch" type="xml">
       <form>
         <sheet>
+          <field class="oe_avatar" name="image" options="{'size': [50, 50]}" widget="image"/>
           <group>
             <group>
               <field name="name"/>
@@ -59,7 +61,7 @@
               <strong class="o_kanban_record_title">
                 <field name="name"/>
               </strong>
-              <div class="o_kanban_record_body"><field name="age"/> years old<br/> <field name="gender"/> <field name="ref"/> <br/> <field name="phone"/><br/> <field name="email"/><br/> <field name="state"/><br/></div>
+              <div class="o_kanban_record_body"><field name="image"/> <br/><field name="age"/> years old<br/> <field name="gender"/> <field name="ref"/> <br/> <field name="phone"/><br/> <field name="email"/><br/> <field name="state"/><br/></div>
             </div>
           </t>
         </templates>

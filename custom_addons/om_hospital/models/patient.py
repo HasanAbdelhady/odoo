@@ -36,6 +36,10 @@ class Patient(models.Model):
         required=True,
     )
     active = fields.Boolean(string="Active", default=True)
+    appointment_id = fields.Many2one(
+        comodel_name="hospital.appointment", string="Appointments"
+    )
+    image = fields.Binary("Photo", attachment=True)
 
     @api.depends("birthday")
     def _compute_age(self):

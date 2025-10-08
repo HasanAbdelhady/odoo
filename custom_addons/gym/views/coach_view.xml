@@ -9,6 +9,7 @@
         <field class="oe_avatar" name="coach_image" options="{'size': [50, 50]}" widget="image"/>
         <field name="name"/>
         <field name="phone_number"/>
+        <field name="trainee_ids" widget="many2many_tags"/>
         <field name="coach_cost_per_hour_normal"/>
         <field name="coach_cost_per_hour_overtime"/>
         <field name="schedule_ids"/>
@@ -39,6 +40,7 @@
             <group>
               <field name="coach_cost_per_hour_normal"/>
               <field name="coach_cost_per_hour_overtime"/>
+              <field name="trainee_ids" widget="many2many_tags"/>
             </group>
           </group>
           <notebook>
