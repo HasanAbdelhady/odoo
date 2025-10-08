@@ -28,6 +28,7 @@
           <button data-hotkey="s" invisible="status == 'draft'" name="reset_to_draft" string="Reset" type="object"/>
           <button class="btn btn-warning" data-hotkey="x" invisible="status !='draft'" name="consultation" string="Consultation" type="object"/>
           <button class="oe_highlight" data-hotkey="d" invisible="status != 'in_consultation'" name="done" string="Done" type="object"/>
+          <!-- <button class="btn btn-danger" invisible="status == 'cancelled'" name="%(wizard_cancel_appointment_action)d" string="Cancel Appointment" type="action"/> -->
           <button class="btn btn-danger" invisible="status == 'cancelled'" name="cancel_appointment" string="Cancel Appointment" type="object"/>
           <field name="status" nolabel="1" statusbar_visible="draft, in_consultation, done" widget="statusbar"/>
         </header>
@@ -120,13 +121,12 @@
     <field name="arch" type="xml">
       <activity string="Appointments">
         <field name="patient_id"/>
+        <field name="ref"/>
         <templates>
           <div t-name="activity-box">
-            <div>
-              <field name="patient_id"/>
-            </div>
-            <div>
-              <field name="status" widget="badge"/>
+            <img class="rounded" t-att-alt="record.patient_id.value" t-att-src="activity_image('patient.image', 'avatar_128', record.patient_id.raw_value)" t-att-title="record.patient_id.value"/>
+            <div class="ms-2">
+              <field display="full" name="ref"/>
             </div>
           </div>
         </templates>

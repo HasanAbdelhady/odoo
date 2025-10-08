@@ -41,6 +41,13 @@ class Patient(models.Model):
     )
     image = fields.Binary("Photo", attachment=True)
 
+    @api.model
+    def create(self, vals):
+        if not vals["ref"]:
+            vals["ref"] = "No reference yet"
+        print(f"Vals are {vals}")
+        return super().create(vals)
+
     @api.depends("birthday")
     def _compute_age(self):
         for record in self:

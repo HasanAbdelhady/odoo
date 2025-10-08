@@ -44,7 +44,6 @@ class Session(models.Model):
         String="Title", compute="_set_session_title", readonly=True, store=True
     )
 
-    # will compute it using the time of the session later
     session_cost = fields.Float(
         string="Session Cost",
         compute="_compute_session_cost",

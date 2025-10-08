@@ -7,6 +7,9 @@
     "depends": ["mail", "product"],
     "data": [
         "security/ir.model.access.csv",
+        "data/patient_data.xml",
+        "data/hospital.patient.csv",
+        "wizard/cancel_appointment_view.xml",
         "views/patient_view.xml",
         "views/children_patients_view.xml",
         "views/female_patients_view.xml",
