@@ -10,10 +10,10 @@ class Appointment(models.Model):
     patient_id = fields.Many2one(
         comodel_name="hospital.patient", string="Patient", required=True, tracking=True
     )
-    patient_name = fields.Char(
-        related="patient_id.name",
-        string="Patient name",
-    )
+    # patient_name = fields.Char(
+    #     related="patient_id.name",
+    #     string="Patient name",
+    # )
     appointment_time = fields.Datetime(
         default=fields.Datetime.now,
         string="Appointment Time",

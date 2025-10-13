@@ -9,6 +9,7 @@
         "security/ir.model.access.csv",
         "data/patient_data.xml",
         "data/hospital.patient.csv",
+        "data/sequence_data.xml",
         "wizard/cancel_appointment_view.xml",
         "views/patient_view.xml",
         "views/children_patients_view.xml",

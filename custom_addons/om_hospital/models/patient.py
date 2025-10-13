@@ -20,7 +20,7 @@ class Patient(models.Model):
         tracking=True,
         required=True,
     )
-    ref = fields.Char(string="Reference")
+    ref = fields.Char(string="Reference", readonly=True)
     address = fields.Text(string="Address", tracking=True)
     phone = fields.Char(string="Phone", tracking=True)
     email = fields.Char(string="Email", tracking=True)
@@ -40,13 +40,26 @@ class Patient(models.Model):
         comodel_name="hospital.appointment", string="Appointments"
     )
     image = fields.Binary("Photo", attachment=True)
+    display_name = fields.Char(string="Display Name", compute="_compute_display_name")
 
-    @api.model
-    def create(self, vals):
-        if not vals["ref"]:
-            vals["ref"] = "No reference yet"
-        print(f"Vals are {vals}")
-        return super().create(vals)
+    @api.depends("name", "ref")
+    def _compute_display_name(self):
+        for record in self:
+            if record.ref:
+                record.display_name = f"[{record.ref}] {record.name}"
+            else:
+                record.display_name = record.name
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vals["ref"] = self.env["ir.sequence"].next_by_code("hospital.patient")
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if not self.ref or self.ref[:2] != "HP":
+            vals["ref"] = self.env["ir.sequence"].next_by_code("hospital.patient")
+        return super().write(vals)
 
     @api.depends("birthday")
     def _compute_age(self):
@@ -77,6 +90,20 @@ class Patient(models.Model):
         for record in self:
             if record.birthday and record.birthday > date.today():
                 raise ValidationError("Birthday cannot be in the future.")
+
+    def name_get(self):
+        return [(record.id, record.display_name) for record in self]
+
+    @api.model
+    def name_search(self, name="", args=None, operator="ilike", limit=100):
+        # Allow searching by name OR ref
+        if name:
+            args = (args or []) + [
+                "|",
+                ("name", operator, name),
+                ("ref", operator, name),
+            ]
+        return super().name_search(name, args, operator, limit)
 
     # @api.constrains("age_years", "age_months", "age_days")
     # def _check_age_not_zero(self):
