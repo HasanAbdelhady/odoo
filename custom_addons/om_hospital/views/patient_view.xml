@@ -5,7 +5,7 @@
     <field name="name">hospital.patient.list</field>
     <field name="model">hospital.patient</field>
     <field name="arch" type="xml">
-      <list>
+      <list export_xlsx="0">
         <field name="name"/>
         <field class="oe_avatar" name="image" options="{'size': [50, 50]}" widget="image"/>
         <field name="birthday"/>
@@ -28,20 +28,28 @@
         <sheet>
           <field class="oe_avatar" name="image" options="{'size': [50, 50]}" widget="image"/>
           <group>
+            <div class="oe_title">
+              <h4>
+                <field name="ref"/>
+              </h4>
+              <h2>
+                <label for="name" string="Name"/>
+                <field name="name"/>
+              </h2>
+            </div>
             <group>
-              <field name="name"/>
               <field name="birthday"/>
-              <field name="gender"/>
+              <field invisible="context.get('in_female_menu')" name="gender"/>
               <field name="age"/>
             </group>
             <group>
-              <field name="ref"/>
               <field name="phone"/>
               <field name="email"/>
+              <field name="appointment_count"/>
             </group>
           </group>
           <group>
-            <field name="address"/>
+            <field name="address" readonly="gender == 'male'"/>
             <field name="state"/>
             <field invisible="1" name="active"/>
           </group>

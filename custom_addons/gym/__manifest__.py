@@ -7,6 +7,7 @@
     "depends": ["mail"],
     "data": [
         "security/ir.model.access.csv",
+        "data/sequence_data.xml",
         "views/coach_view.xml",
         "views/trainee_view.xml",
         "views/membership_view.xml",

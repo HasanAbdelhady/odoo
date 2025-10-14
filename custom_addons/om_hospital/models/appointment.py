@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
 class Appointment(models.Model):
@@ -8,7 +9,11 @@ class Appointment(models.Model):
     _rec_name = "patient_id"
 
     patient_id = fields.Many2one(
-        comodel_name="hospital.patient", string="Patient", required=True, tracking=True
+        comodel_name="hospital.patient",
+        string="Patient",
+        required=True,
+        tracking=True,
+        ondelete="restrict",
     )
     # patient_name = fields.Char(
     #     related="patient_id.name",
@@ -58,6 +63,13 @@ class Appointment(models.Model):
         string="Phramacy Lines",
     )
     hide_sales_price = fields.Boolean(string="Hide sales price")
+
+    # override deletion behaviour
+    def unlink(self):
+        for record in self:
+            if record.status != "draft":
+                raise ValidationError("You cannot delete this appointments!")
+        return super().unlink()
 
     @api.onchange("patient_id")
     def on_change(self):

@@ -1,4 +1,3 @@
-from datetime import date
 from odoo import models, fields, api
 from dateutil.relativedelta import relativedelta
 from odoo.exceptions import ValidationError
@@ -41,6 +40,27 @@ class Patient(models.Model):
     )
     image = fields.Binary("Photo", attachment=True)
     display_name = fields.Char(string="Display Name", compute="_compute_display_name")
+    appointment_count = fields.Integer(
+        string="Number of Appointments", compute="_count_appointments", store=True
+    )
+    appointment_ids = fields.One2many(
+        "hospital.appointment", "patient_id", string="Appointments"
+    )
+
+    _sql_constraints = [
+        (
+            "right_phone_num_len",
+            "CHECK (LENGTH(phone) = 11)",
+            "Phone number must have 11 digits",
+        )
+    ]
+
+    @api.depends("appointment_ids")
+    def _count_appointments(self):
+        for record in self:
+            record.appointment_count = self.env["hospital.appointment"].search_count(
+                [("patient_id", "=", record.id)]
+            )
 
     @api.depends("name", "ref")
     def _compute_display_name(self):
@@ -65,7 +85,7 @@ class Patient(models.Model):
     def _compute_age(self):
         for record in self:
             if record.birthday:
-                today = date.today()
+                today = fields.Date.today()
                 delta = relativedelta(today, record.birthday)
 
                 years = delta.years
@@ -87,8 +107,12 @@ class Patient(models.Model):
 
     @api.constrains("birthday")
     def _check_birthday(self):
+        print("================================================")
+        print(f"Type of Self is {type(self)}")
+        print(f"Self is {self.env.context}")
+        print("================================================")
         for record in self:
-            if record.birthday and record.birthday > date.today():
+            if record.birthday and record.birthday > fields.Date.today():
                 raise ValidationError("Birthday cannot be in the future.")
 
     def name_get(self):

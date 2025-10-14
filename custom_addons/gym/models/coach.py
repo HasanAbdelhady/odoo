@@ -61,7 +61,7 @@ class Coach(models.Model):
 
     name = fields.Char(string="coach Name", required=True)
     coach_image = fields.Binary("Photo", attachment=True)
-    coach_id = fields.Integer(string="coach ID", required=True, tracking=True)
+    coach_id = fields.Char(string="Coach ID", readonly=True, tracking=True)
     phone_number = fields.Char(string="Phone Number", required=True, unique=True)
 
     schedule_ids = fields.One2many(
@@ -86,3 +86,29 @@ class Coach(models.Model):
             "The coach's phone number must be unique!",
         ),
     ]
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get("coach_id"):
+                coach_id = self.env["ir.sequence"].next_by_code("gym.coach")
+                print(f"🔥 DEBUG: Generated coach_id: {coach_id}")
+                vals["coach_id"] = coach_id
+        print(f"🔥 DEBUG: Final vals_list: {vals_list}")
+        return super().create(vals_list)
+
+    def write(self, vals):
+        # Only generate coach_id if the record doesn't have one AND it's not being set in vals
+        if not self.coach_id and "coach_id" not in vals:
+            vals["coach_id"] = self.env["ir.sequence"].next_by_code("gym.coach")
+        return super().write(vals)
+
+    @api.returns("self", lambda value: value.id)
+    def copy(self, default=None):
+        if not default:
+            default = {}
+        if not default.get("phone_number"):
+            default["phone_number"] = f"{self.phone_number} (copy)"
+        # Clear coach_id so a new one gets generated
+        default["coach_id"] = False
+        return super().copy(default)
