@@ -1,9 +1,9 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class Membership(models.Model):
     _name = "gym.membership"
-    _description = "Membersihps"
+    _description = "Memberships"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     coach_id = fields.Many2one(comodel_name="gym.coach", string="Coach Name")
@@ -23,3 +23,25 @@ class Membership(models.Model):
     trainee_phone = fields.Char(
         related="trainee_id.phone_number", string="Trainee Phone", readonly=True
     )
+
+    product_id = fields.Many2one(
+        "product.product", domain=[("is_gym_membership", "=", True)], required=True
+    )
+    purchase_date = fields.Date(default=fields.Date.today)
+
+    expiry_date = fields.Date()
+
+    sessions_purchased = fields.Integer(related="product_id.session_count")
+    sessions_used = fields.Integer(compute="_compute_sessions_used")
+    sessions_remaining = fields.Integer(compute="_compute_sessions_remaining")
+
+    @api.depends("product_id")  # Add this method
+    def _compute_sessions_used(self):
+        for record in self:
+            # For now, just set to 0 - you can implement session counting later
+            record.sessions_used = 0
+
+    @api.depends("sessions_purchased", "sessions_used")  # Add this method
+    def _compute_sessions_remaining(self):
+        for record in self:
+            record.sessions_remaining = record.sessions_purchased - record.sessions_used

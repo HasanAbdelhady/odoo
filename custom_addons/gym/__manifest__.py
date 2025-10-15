@@ -4,7 +4,7 @@
     "category": "Gym Management",
     "description": "Gym Management",
     "sequence": -99,
-    "depends": ["mail"],
+    "depends": ["mail", "product", "sale"],
     "data": [
         "security/ir.model.access.csv",
         "data/sequence_data.xml",
@@ -12,6 +12,7 @@
         "views/trainee_view.xml",
         "views/membership_view.xml",
         "views/session_view.xml",
+        "views/product_views.xml",
         "views/menu.xml",
     ],
     "demo": [],

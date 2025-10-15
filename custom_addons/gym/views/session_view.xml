@@ -30,6 +30,7 @@
           <group>
             <group>
               <field name="session_title"/>
+              <field name="membership_id" string="Choose your membership"/>
               <field name="session_start_time" string="Session Start Time"/>
               <field name="session_end_time" string="Session End Time"/>
               <field name="session_cost" string="Session Cost"/>

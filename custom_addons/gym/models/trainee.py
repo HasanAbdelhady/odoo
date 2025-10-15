@@ -1,7 +1,7 @@
 from odoo import models, fields
 
 
-class trainee(models.Model):
+class Trainee(models.Model):
     _name = "gym.trainee"
     _description = "Trainee"
     _inherit = ["mail.thread", "mail.activity.mixin"]
