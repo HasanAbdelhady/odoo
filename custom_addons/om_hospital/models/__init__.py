@@ -1,1 +1,1 @@
-from . import patient, appointment
+from . import patient, appointment, res_config_settings

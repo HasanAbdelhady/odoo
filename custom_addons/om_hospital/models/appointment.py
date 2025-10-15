@@ -13,7 +13,6 @@ class Appointment(models.Model):
         string="Patient",
         required=True,
         tracking=True,
-        ondelete="restrict",
     )
     # patient_name = fields.Char(
     #     related="patient_id.name",
@@ -77,7 +76,9 @@ class Appointment(models.Model):
             self.ref = self.patient_id.ref
 
     def consultation(self):
-        self.status = "in_consultation"
+        for rec in self:
+            if rec.status == "draft":
+                self.status = "in_consultation"
 
     def done(self):
         self.status = "done"

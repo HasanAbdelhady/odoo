@@ -11,4 +11,5 @@
     <menuitem action="wizard_cancel_appointment_action" id="menu_cancel_appointment" name="Cancel Appointment" sequence="50"/>
   </menuitem>
   <menuitem action="om_hospital_hasan_linkedin_action" id="menu_hospital_hasan_linkedin" name="Hasan LinkedIn" parent="menu_hospital_root" sequence="5"/>
+  <menuitem id="menu_configuration" name="Configuration" parent="menu_hospital_root" sequence="100"/>
 </odoo>

@@ -6,6 +6,12 @@
     <field name="model">hospital.appointment</field>
     <field name="arch" type="xml">
       <list decoration-danger="status == 'cancelled'" decoration-muted="status == 'draft'" decoration-success="status == 'done'" decoration-warning="status == 'in_consultation'" multi_edit="1" sample="1">
+        <header>
+          <button name="reset_to_draft" string="Reset" type="object"/>
+          <button class="btn btn-warning" name="consultation" string="Consultation" type="object"/>
+          <button class="oe_highlight" name="done" string="Done" type="object"/>
+          <button class="btn btn-danger" context="{'default_reason':'dk lol', 'hide_appointment': 1 }" name="%(om_hospital.wizard_cancel_appointment_action)d" string="Cancel Appointment" type="action"/>
+        </header>
         <field name="patient_id" width="200"/>
         <field name="appointment_time" width="200"/>
         <field name="booking_date" optional="hide" width="200"/>
@@ -15,6 +21,14 @@
         <field name="ref" optional="hide"/>
         <field name="doctor_id" widget="many2one_avatar_user"/>
         <field decoration-danger="status == 'cancelled'" decoration-muted="status == 'draft'" decoration-success="status == 'done'" decoration-warning="status == 'in_consultation'" name="status" widget="badge" width="100"/>
+        <button data-hotkey="s" invisible="status == 'draft'" name="reset_to_draft" string="Reset" type="object"/>
+        <button class="fa fa-warning btn-warning" invisible="status !='draft'" name="consultation" type="object"/>
+        <button class="fa fa-check btn-success" invisible="status != 'in_consultation'" name="done" type="object"/>
+        <button class="fa fa-times btn-danger" context="{'default_reason':'dk lol', 'hide_appointment': 1 }" invisible="status == 'cancelled'" name="%(om_hospital.wizard_cancel_appointment_action)d" type="action"/>
+        <groupby name="patient_id">
+          <button class="oe_highlight" name="action_test" string="Click Me" type="object"/>
+          <button class="oe_edit_only" name="edit" string="Edit" type="edit"/>
+        </groupby>
       </list>
     </field>
   </record>

@@ -55,6 +55,18 @@ class Patient(models.Model):
         )
     ]
 
+    def action_test(self):
+        print("Clicked haha")
+        return
+
+    @api.ondelete(at_uninstall=False)
+    def _check_appointments(self):
+        for rec in self:
+            if rec.appointment_id:
+                raise ValidationError(
+                    "You cannot delete patients that have appointments"
+                )
+
     @api.depends("appointment_ids")
     def _count_appointments(self):
         for record in self:
