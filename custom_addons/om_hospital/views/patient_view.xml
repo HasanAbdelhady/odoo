@@ -87,7 +87,7 @@
         <separator/>
         <filter domain="[('active', '=', False)]" name="filter_archived" string="Archived"/>
         <separator/>
-        <!-- <filter domain="[('age', '&lt;=', 17)]" name="filter_is_child" string="Is a Child"/> -->
+        <filter domain="[('age', '&lt;=', 17)]" name="filter_is_child" string="Is a Child"/>
         <filter context="{'group_by': 'gender'}" name="group_by_gender" string="Gender"/>
         <filter context="{'group_by': 'state'}" name="group_by_state" string="State"/>
         <field filter_domain="['|','|','|',('name','ilike',self),('gender','ilike',self),('age','ilike',self),('phone','ilike',self)]" name="name"/>

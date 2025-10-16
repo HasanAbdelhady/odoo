@@ -1,15 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <record id="product_template_form_inherit" model="ir.ui.view">
-    <field name="name">product.template.form.inherit</field>
+  <!-- Simplified Membership Plan Form View -->
+  <record id="product_template_gym_membership_form" model="ir.ui.view">
+    <field name="name">product.template.gym.membership.form</field>
     <field name="model">product.template</field>
-    <field name="inherit_id" ref="product.product_template_form_view"/>
+    <field name="priority">20</field>
     <field name="arch" type="xml">
-      <xpath expr="//field[@name='type']" position="before">
-        <field name="is_gym_membership"/>
-        <field invisible="not is_gym_membership" name="session_count"/>
-        <field invisible="not is_gym_membership" name="session_duration"/>
-      </xpath>
+      <form string="Membership Plan">
+        <sheet>
+          <field invisible="1" name="is_gym_membership"/>
+          <field invisible="1" name="type"/>
+          <field invisible="1" name="currency_id"/>
+          <div class="oe_title">
+            <label for="name" string="Membership Plan Name"/>
+            <h1>
+              <field name="name" placeholder="e.g. Standard Plan (10 Sessions)"/>
+            </h1>
+          </div>
+          <group>
+            <group string="Plan Details">
+              <field name="list_price" required="1" string="Total Membership Price"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <!-- Membership Plan List View -->
+  <record id="product_template_gym_membership_list" model="ir.ui.view">
+    <field name="name">product.template.gym.membership.list</field>
+    <field name="model">product.template</field>
+    <field name="priority">20</field>
+    <field name="arch" type="xml">
+      <list string="Membership Plans">
+        <field name="name"/>
+        <field name="list_price" string="Total Price" widget="monetary"/>
+      </list>
+    </field>
+  </record>
+  <!-- Action for Gym Membership Plans -->
+  <record id="action_gym_membership_plans" model="ir.actions.act_window">
+    <field name="name">Membership Plans</field>
+    <field name="res_model">product.template</field>
+    <field name="view_mode">list,form</field>
+    <field name="view_id" ref="product_template_gym_membership_form"/>
+    <field name="domain">[('is_gym_membership', '=', True)]</field>
+    <field name="context">{ 'default_is_gym_membership': True, 'default_type': 'service', 'default_sale_ok': True, 'default_purchase_ok': False }</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Create your first membership plan!</p>
+      <p>Membership plans define the number of sessions, duration, and pricing for your gym members.</p>
     </field>
   </record>
 </odoo>

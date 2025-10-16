@@ -9,45 +9,51 @@ class Session(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _rec_name = "session_title"
 
-    membership_id = fields.Many2one(comodel_name="gym.membership", string="Membership")
-    coach_id = fields.Many2one(comodel_name="gym.coach", string="Coach Name")
-    trainee_id = fields.Many2one(comodel_name="gym.trainee", string="Trainee Name")
+    membership_id = fields.Many2one(
+        comodel_name="gym.membership", string="Membership", default=None
+    )
 
-    coach_name = fields.Char(related="coach_id.name", string="Coach name")
+    # Coach Fields
+    coach_id = fields.Many2one(comodel_name="gym.coach", string="Coach Name")
+    coach_name = fields.Char(
+        string="Coach name", related="membership_id.coach_id.name", readonly=True
+    )
     coach_image = fields.Binary(
-        related="coach_id.coach_image", string="Coach Photo", readonly=True
+        string="Coach Photo", readonly=True, compute="_set_membership_data"
     )
     coach_phone = fields.Char(
-        related="coach_id.phone_number", string="Coach Phone", readonly=True
+        string="Coach Phone", readonly=True, compute="_set_membership_data"
     )
+
+    # Trainee Fields
+    trainee_id = fields.Many2one(comodel_name="gym.trainee", string="Trainee Name")
+    trainee_name = fields.Char(
+        string="Trainee Name", compute="_set_membership_data", readonly=True
+    )
+    trainee_image = fields.Binary(
+        string="Trainee Photo", readonly=True, compute="_set_membership_data"
+    )
+    trainee_phone = fields.Char(
+        string="Trainee Phone", readonly=True, compute="_set_membership_data"
+    )
+
     session_start_time = fields.Datetime(
         string="Session Start Time", required=True, tracking=True
     )
     session_end_time = fields.Datetime(
         string="Session End Time", required=True, tracking=True
     )
-    # Related fields for trainee
-    trainee_name = fields.Char(
-        related="trainee_id.name",
-        string="Trainee Name",
-    )
-    trainee_image = fields.Binary(
-        related="trainee_id.trainee_image", string="Trainee Photo", readonly=True
-    )
-    trainee_phone = fields.Char(
-        related="trainee_id.phone_number", string="Trainee Phone", readonly=True
-    )
 
     session_title = fields.Char(
         String="Title", compute="_set_session_title", readonly=True, store=True
     )
 
-    session_cost = fields.Float(
-        related="membership_id.product_id.list_price",
-        string="Session Cost",
-        store=True,
-        readonly=True,
-    )
+    # session_cost = fields.Float(
+    #     related="membership_id.product_id.list_price",
+    #     string="Session Cost",
+    #     store=True,
+    #     readonly=True,
+    # )
     is_attended_by_coach = fields.Boolean(string="Did the coach attend?")
     is_attended_by_trainee = fields.Boolean(string="Did the trainee attend?")
     session_duration = fields.Float(
@@ -56,15 +62,30 @@ class Session(models.Model):
         store=True,
     )
 
-    @api.depends("coach_name", "trainee_name", "trainee_phone")
+    @api.depends("membership_id")
+    def _set_membership_data(self):
+        for record in self:
+            if record.membership_id:
+                record.coach_image = record.membership_id.coach_id.coach_image
+                record.coach_phone = record.membership_id.coach_id.phone_number
+                record.trainee_name = record.membership_id.trainee_id.name
+                record.trainee_image = record.membership_id.trainee_id.trainee_image
+                record.trainee_phone = record.membership_id.trainee_id.phone_number
+            else:
+                # Set default values when no membership
+                record.coach_image = False
+                record.coach_phone = ""
+                record.trainee_name = ""
+                record.trainee_image = False
+                record.trainee_phone = ""
+
+    @api.depends("membership_id")
     def _set_session_title(self):
         for record in self:
-            if record.coach_name and record.trainee_name and record.trainee_phone:
-                record.session_title = f"""Trainee: {record.trainee_name} - Phone: {record.trainee_phone} -
-                Coach: {record.coach_name}
-                """
+            if record.membership_id:
+                record.session_title = record.membership_id.name
             else:
-                self.session_title = ""
+                record.session_title = ""
 
     @api.depends("session_start_time", "session_end_time")
     def _compute_session_duration(self):

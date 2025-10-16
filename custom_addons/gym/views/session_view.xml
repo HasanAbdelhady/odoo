@@ -33,15 +33,14 @@
               <field name="membership_id" string="Choose your membership"/>
               <field name="session_start_time" string="Session Start Time"/>
               <field name="session_end_time" string="Session End Time"/>
-              <field name="session_cost" string="Session Cost"/>
             </group>
             <group>
-              <field name="coach_id"/>
+              <field name="coach_name"/>
               <field name="coach_image" options="{'size': [50, 50]}" string="Coach Photo" widget="image"/>
               <field name="coach_phone" string="Coach Phone"/>
             </group>
             <group>
-              <field name="trainee_id"/>
+              <field name="trainee_name"/>
               <field name="trainee_image" options="{'size': [50, 50]}" string="Trainee Photo" widget="image"/>
               <field name="trainee_phone" string="Trainee Phone"/>
             </group>

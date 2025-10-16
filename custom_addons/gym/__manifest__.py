@@ -12,7 +12,7 @@
         "views/trainee_view.xml",
         "views/membership_view.xml",
         "views/session_view.xml",
-        "views/product_views.xml",
+        "views/product_view.xml",
         "views/menu.xml",
     ],
     "demo": [],

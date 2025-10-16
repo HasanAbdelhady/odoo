@@ -9,6 +9,8 @@ class ProductTemplate(models.Model):
     session_count = fields.Integer(string="Number of Sessions", default=10)
     session_duration = fields.Float(string="Session Duration", default=1.0)
 
+    coach_id = fields.Many2one("gym.coach", string="Coach")
+
     @api.onchange("is_gym_membership")
     def _onchange_is_gym_membership(self):
         for record in self:

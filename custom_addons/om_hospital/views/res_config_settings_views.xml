@@ -4,11 +4,10 @@
     <record id="res_config_settings_view_form" model="ir.ui.view">
       <field name="name">res.config.settings.view.hospital</field>
       <field name="model">res.config.settings</field>
-      <field eval="90" name="priority"/>
       <field name="inherit_id" ref="base.res_config_settings_view_form"/>
       <field name="arch" type="xml">
         <xpath expr="//form" position="inside">
-          <app data-string="Hospital" groups="hospital.hospital_group_manager" id="hospital" name="hospital" string="hospital">
+          <app data-string="Hospital" id="hospital" name="hospital" string="hospital" icon="fa-hospital-o">
             <block id="end_contract_setting" title="Hospital Management">
               <setting string="Cancellation Days">
                 <span class="o_form_label">Cancellation before</span>
@@ -24,6 +23,7 @@
     </record>
     <record id="hospital_config_settings_action" model="ir.actions.act_window">
       <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
       <field name="res_model">res.config.settings</field>
       <field name="view_mode">form</field>
       <field name="target">inline</field>

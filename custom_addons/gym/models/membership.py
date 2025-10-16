@@ -6,6 +6,9 @@ class Membership(models.Model):
     _description = "Memberships"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
+    name = fields.Char(
+        string="Membership Name", readonly=True, compute="_set_membership_name"
+    )
     coach_id = fields.Many2one(comodel_name="gym.coach", string="Coach Name")
     trainee_id = fields.Many2one(comodel_name="gym.trainee", string="Trainee Name")
 
@@ -25,7 +28,13 @@ class Membership(models.Model):
     )
 
     product_id = fields.Many2one(
-        "product.product", domain=[("is_gym_membership", "=", True)], required=True
+        "product.product",
+        string="Membership Plan",
+        domain=[("is_gym_membership", "=", True)],
+        required=True,
+    )
+    membership_price = fields.Float(
+        related="product_id.list_price", string="Membership Price"
     )
     purchase_date = fields.Date(default=fields.Date.today)
 
@@ -34,6 +43,13 @@ class Membership(models.Model):
     sessions_purchased = fields.Integer(related="product_id.session_count")
     sessions_used = fields.Integer(compute="_compute_sessions_used")
     sessions_remaining = fields.Integer(compute="_compute_sessions_remaining")
+
+    def _set_membership_name(self):
+        for record in self:
+            if record.product_id and record.trainee_id and record.coach_id:
+                record.name = f"Trainee: {record.trainee_id.name} - Coach: {record.coach_id.name} ({record.product_id.name})"
+            else:
+                record.name = ""
 
     @api.depends("product_id")  # Add this method
     def _compute_sessions_used(self):

@@ -10,8 +10,14 @@ class Patient(models.Model):
 
     name = fields.Char(string="Name", required=True, tracking=True)
     birthday = fields.Date(string="birthday", required=True)
-    # age is currently a non-stored computed field
-    age = fields.Char(string="Age", compute="_compute_age", tracking=True)
+    # age is now an integer field for years with inverse function
+    age = fields.Integer(
+        string="Age (Years)",
+        compute="_compute_age",
+        inverse="_inverse_age",
+        store=True,
+        tracking=True,
+    )
     gender = fields.Selection(
         string="Gender",
         selection=[("male", "Male"), ("female", "Female")],
@@ -54,6 +60,10 @@ class Patient(models.Model):
             "Phone number must have 11 digits",
         )
     ]
+
+    # def _search_age(self, operator, value):
+    #     date_of_birth = fields.Date.today() - relativedelta(years=value)
+    #     return [("date_of_birth", "=", date_of_birth)]
 
     def action_test(self):
         print("Clicked haha")
@@ -99,23 +109,20 @@ class Patient(models.Model):
             if record.birthday:
                 today = fields.Date.today()
                 delta = relativedelta(today, record.birthday)
-
-                years = delta.years
-                months = delta.months
-                days = delta.days
-
-                # Build a readable string, e.g. "23 years, 4 months, 12 days"
-                parts = []
-                if years:
-                    parts.append(f"{years} year{'s' if years != 1 else ''}")
-                if months:
-                    parts.append(f"{months} month{'s' if months != 1 else ''}")
-                if days:
-                    parts.append(f"{days} day{'s' if days != 1 else ''}")
-
-                record.age = ", ".join(parts) if parts else "0 days"
+                record.age = delta.years
             else:
-                record.age = "0 days"
+                record.age = 0
+
+    def _inverse_age(self):
+        """Inverse function to calculate birthday from age"""
+        for record in self:
+            if record.age and record.age > 0:
+                today = fields.Date.today()
+                # Calculate birthday by subtracting age years from today
+                record.birthday = today - relativedelta(years=record.age)
+            elif record.age == 0:
+                # If age is 0, set birthday to today
+                record.birthday = fields.Date.today()
 
     @api.constrains("birthday")
     def _check_birthday(self):
@@ -126,6 +133,12 @@ class Patient(models.Model):
         for record in self:
             if record.birthday and record.birthday > fields.Date.today():
                 raise ValidationError("Birthday cannot be in the future.")
+
+    @api.constrains("age")
+    def _check_age(self):
+        for record in self:
+            if record.age and (record.age < 0 or record.age > 150):
+                raise ValidationError("Age must be between 0 and 150 years.")
 
     def name_get(self):
         return [(record.id, record.display_name) for record in self]
