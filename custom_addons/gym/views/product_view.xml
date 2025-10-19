@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>Product Template Form View - Add Gym Session Fields <record id="product_template_form_view_gym" model="ir.ui.view">
+<odoo>
+  <!-- Product Template Form View - Add Gym Session Fields  -->
+  <record id="product_template_form_view_gym" model="ir.ui.view">
     <field name="name">product.template.form.gym</field>
     <field name="model">product.template</field>
     <field name="inherit_id" ref="product.product_template_only_form_view"/>
@@ -7,71 +9,16 @@
       <xpath expr="//field[@name='type']" position="after">
         <field name="is_gym_membership" string="Gym Membership?"/>
       </xpath>
-      <!-- Add gym session checkbox after name -->
-      <!-- Add session package fields under General Information page -->
-      <!-- Add gym session details in a new page -->
-      <!-- <xpath expr="//notebook" position="inside"> -->
-      <!--   <page invisible="not is_gym_membership" string="Gym Session Details"> -->
-      <!--     <group> -->
-      <!--       <group string="Session Information"> -->
-      <!--         <field name="session_duration" widget="float_time"/> -->
-      <!--         <field name="coach_id"/> -->
-      <!--       </group> -->
-      <!--       <group string="Pricing Summary"> -->
-      <!--         <field name="list_price" string="Base Price per Hour"/> -->
-      <!--         <separator colspan="2" string="Session Pricing"/> -->
-      <!--         <div class="o_row"> -->
-      <!--           <span class="o_form_label">Standard Hours:</span> -->
-      <!--           <field name="list_price" nolabel="1" options="{'currency_field': 'currency_id'}" readonly="1" widget="monetary"/> -->
-      <!--           <span class="text-muted">per hour</span> -->
-      <!--         </div> -->
-      <!--         <div class="o_row"> -->
-      <!--           <span class="o_form_label">Overtime Hours:</span> -->
-      <!--           <field name="list_price" nolabel="1" options="{'currency_field': 'currency_id'}" readonly="1" widget="monetary"/> -->
-      <!--           <span class="text-success">× 1.25 =</span> -->
-      <!--           <strong class="text-success"> -->
-      <!--             <field decoration-bf="1" name="list_price" nolabel="1" options="{'currency_field': 'currency_id'}" readonly="1" widget="monetary"/> -->
-      <!--           </strong> -->
-      <!--           <span class="text-muted">per hour</span> -->
-      <!--         </div> -->
-      <!--       </group> -->
-      <!--     </group> -->
-      <!--   </page> -->
-      <!-- New Session Details Page for Trainer Compensation -->
-      <!-- <page invisible="not is_gym_membership" string="Session Details"> -->
-      <!--   <group string="Trainer Compensation - In Working Hours"> -->
-      <!--     <group> -->
-      <!--       <field name="trainer_percentage_in_time" widget="percentage"/> -->
-      <!--       <field name="trainer_amount_in_time" readonly="1"/> -->
-      <!--     </group> -->
-      <!--     <group> -->
-      <!--       <div class="alert alert-info" role="alert"><strong>Calculation:</strong> Sale Price × Percentage<br/> <span class="text-muted">Amount = <field name="list_price" options="{'currency_field': 'currency_id'}" readonly="1" widget="monetary"/> × <field name="trainer_percentage_in_time" readonly="1"/>%</span></div> -->
-      <!--     </group> -->
-      <!--   </group> -->
-      <!--   <group string="Trainer Compensation - Outside Working Hours"> -->
-      <!--     <group> -->
-      <!--       <field name="trainer_percentage_out_time" widget="percentage"/> -->
-      <!--       <field name="trainer_amount_out_time" readonly="1"/> -->
-      <!--     </group> -->
-      <!--     <group> -->
-      <!--       <div class="alert alert-warning" role="alert"><strong>Calculation:</strong> Sale Price × Percentage<br/> <span class="text-muted">Amount = <field name="list_price" options="{'currency_field': 'currency_id'}" readonly="1" widget="monetary"/> × <field name="trainer_percentage_out_time" readonly="1"/>%</span></div> -->
-      <!--     </group> -->
-      <!--   </group> -->
-      <!-- </page> -->
-      <!--     </xpath> -->
-      <!--   </field> -->
-      <!-- </record> -->
     </field>
-  </record> <!-- Simplified Form View for Gym Session Products Only --><record id="product_template_gym_only_form" model="ir.ui.view">
+  </record>
+  <!-- Simplified Form View for Gym Session Products Only -->
+  <record id="product_template_gym_only_form" model="ir.ui.view">
     <field name="name">product.template.gym.only.form</field>
     <field name="model">product.template</field>
     <field name="priority">20</field>
     <field name="arch" type="xml">
       <form string="Gym Memberhsip Product">
         <sheet>
-          <field invisible="1" name="is_gym_membership"/>
-          <field invisible="1" name="type"/>
-          <field invisible="1" name="currency_id"/>
           <div class="oe_title">
             <label for="name" string="Membership Name"/>
             <h1>
@@ -80,10 +27,9 @@
           </div>
           <group>
             <group string="Session Configuration">
-              <field name="is_gym_membership"/>
+              <field invisible="1" name="is_gym_membership"/>
               <field name="session_count" required="1" widget="float_time"/>
               <field name="session_duration" required="1" widget="float_time"/>
-              <field name="coach_id"/>
             </group>
             <group string="Pricing">
               <field name="list_price" required="1" string="Price per Hour"/>
@@ -91,43 +37,24 @@
               <div class="o_row"><span class="o_form_label">Standard Rate:</span><span>
                   <field name="list_price" nolabel="1" options="{'currency_field': 'currency_id'}" readonly="1" widget="monetary"/>
                 </span>/hour</div>
-              <div class="o_row text-success"><span class="o_form_label">Overtime Rate:</span><strong>
-                  <field name="list_price" nolabel="1" options="{'currency_field': 'currency_id'}" readonly="1" widget="monetary"/>
-                </strong> × 1.25 /hour</div>
+              <field name="total_memebership_price"/>
             </group>
           </group>
-          <!-- <notebook> -->
-          <!--   <page string="Trainer Compensation"> -->
-          <!--     <group> -->
-          <!--       <group string="During Working Hours"> -->
-          <!--         <field name="trainer_percentage_in_time" widget="percentage"/> -->
-          <!--         <field name="trainer_amount_in_time" readonly="1" string="Amount per Hour"/> -->
-          <!--       </group> -->
-          <!--       <group string="Outside Working Hours (Overtime)"> -->
-          <!--         <field name="trainer_percentage_out_time" widget="percentage"/> -->
-          <!--         <field name="trainer_amount_out_time" readonly="1" string="Amount per Hour"/> -->
-          <!--       </group> -->
-          <!--     </group> -->
-          <!--     <group> -->
-          <!--       <div class="alert alert-info" role="alert"><strong>How it works:</strong><br/> • Trainer compensation is calculated as a percentage of the session price<br/> • Different percentages apply for standard hours vs overtime<br/> • The system automatically detects if a session is during coach's working hours</div> -->
-          <!--     </group> -->
-          <!--   </page> -->
-          <!--   <page string="Description"> -->
-          <!--     <field name="description" placeholder="Add a description for this session type..."/> -->
-          <!--   </page> -->
-          <!-- </notebook> -->
         </sheet>
       </form>
     </field>
-  </record> <!-- Action for Gym Session Products --><record id="action_gym_session_products" model="ir.actions.act_window">
+  </record>
+  <!-- Action for Gym Session Products -->
+  <record id="action_gym_session_products" model="ir.actions.act_window">
     <field name="name">Session Products</field>
     <field name="res_model">product.template</field>
     <field name="view_mode">form</field>
     <field name="view_id" ref="product_template_gym_only_form"/>
     <field name="domain">[('is_gym_membership', '=', True)]</field>
-    <field name="context">{ 'default_type': 'service', 'default_sale_ok': True, 'default_purchase_ok': False }</field>
+    <field name="context">{'default_is_gym_membership':True ,'default_type': 'service', 'default_sale_ok': True, 'default_purchase_ok': False }</field>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">Create your first gym session product!</p>
       <p>Session products define the pricing and trainer compensation for different types of sessions.</p>
     </field>
-  </record></odoo>
+  </record>
+</odoo>

@@ -1,1 +1,1 @@
-from . import models, sale_order
+from . import models, sale_order, groups

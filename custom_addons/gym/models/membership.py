@@ -33,9 +33,6 @@ class Membership(models.Model):
         domain=[("is_gym_membership", "=", True)],
         required=True,
     )
-    membership_price = fields.Float(
-        related="product_id.list_price", string="Membership Price"
-    )
     purchase_date = fields.Date(default=fields.Date.today)
 
     expiry_date = fields.Date()
@@ -43,6 +40,13 @@ class Membership(models.Model):
     sessions_purchased = fields.Integer(related="product_id.session_count")
     sessions_used = fields.Integer(compute="_compute_sessions_used")
     sessions_remaining = fields.Integer(compute="_compute_sessions_remaining")
+
+    session_price = fields.Float(
+        related="product_id.session_price", string="Session Price"
+    )
+    membership_price = fields.Float(
+        related="product_id.total_memebership_price", string="Membership Price"
+    )
 
     def _set_membership_name(self):
         for record in self:

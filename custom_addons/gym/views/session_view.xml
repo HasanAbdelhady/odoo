@@ -14,7 +14,6 @@
         <field name="trainee_image" options="{'size': [50, 50]}" string="Trainee Photo" widget="image"/>
         <field name="trainee_phone" string="Trainee Phone"/>
         <field name="session_start_time" string="Session Start Time"/>
-        <field name="session_end_time" string="Session End Time"/>
         <field name="is_attended_by_coach" widget="boolean_toggle"/>
         <field name="is_attended_by_trainee" widget="boolean_toggle"/>
       </list>
@@ -32,7 +31,6 @@
               <field name="session_title"/>
               <field name="membership_id" string="Choose your membership"/>
               <field name="session_start_time" string="Session Start Time"/>
-              <field name="session_end_time" string="Session End Time"/>
             </group>
             <group>
               <field name="coach_name"/>
@@ -43,6 +41,9 @@
               <field name="trainee_name"/>
               <field name="trainee_image" options="{'size': [50, 50]}" string="Trainee Photo" widget="image"/>
               <field name="trainee_phone" string="Trainee Phone"/>
+              <field name="session_price" string="Session Price"/>
+              <field name="is_overtime"/>
+              <field name="coach_share"/>
             </group>
             <group>
               <field name="is_attended_by_coach" widget="boolean_toggle"/>
@@ -74,7 +75,7 @@
     <field name="name">gym.session.calendar</field>
     <field name="model">gym.session</field>
     <field name="arch" type="xml">
-      <calendar color="coach_id" date_start="session_start_time" date_stop="session_end_time" event_open_popup="true" mode="month" quick_create="1" string="Session Calendar">
+      <calendar color="coach_id" date_start="session_start_time" event_open_popup="true" mode="month" quick_create="1" string="Session Calendar">
         <field name="session_title"/>
         <field name="coach_id"/>
         <field name="trainee_id"/>

@@ -60,6 +60,7 @@
               <field name="gender"/>
               <field name="ref"/>
               <field name="doctor_id" widget="many2one_avatar_user"/>
+              <field name="operation_id"/>
             </group>
             <group>
               <field groups="base.group_no_one" name="hide_sales_price" widget="boolean_toggle"/>

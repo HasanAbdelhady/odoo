@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from datetime import datetime, date
 from odoo.exceptions import ValidationError
+import pytz
 
 
 class Session(models.Model):
@@ -14,7 +15,7 @@ class Session(models.Model):
     )
 
     # Coach Fields
-    coach_id = fields.Many2one(comodel_name="gym.coach", string="Coach Name")
+    coach_id = fields.Many2one(related="membership_id.coach_id", string="Coach Name")
     coach_name = fields.Char(
         string="Coach name", related="membership_id.coach_id.name", readonly=True
     )
@@ -40,20 +41,17 @@ class Session(models.Model):
     session_start_time = fields.Datetime(
         string="Session Start Time", required=True, tracking=True
     )
-    session_end_time = fields.Datetime(
-        string="Session End Time", required=True, tracking=True
-    )
 
     session_title = fields.Char(
         String="Title", compute="_set_session_title", readonly=True, store=True
     )
 
-    # session_cost = fields.Float(
-    #     related="membership_id.product_id.list_price",
-    #     string="Session Cost",
-    #     store=True,
-    #     readonly=True,
-    # )
+    session_price = fields.Float(
+        related="membership_id.session_price",
+        string="Session Cost",
+        store=True,
+        readonly=True,
+    )
     is_attended_by_coach = fields.Boolean(string="Did the coach attend?")
     is_attended_by_trainee = fields.Boolean(string="Did the trainee attend?")
     session_duration = fields.Float(
@@ -61,6 +59,92 @@ class Session(models.Model):
         string="Session Duration",
         store=True,
     )
+    is_overtime = fields.Boolean(string="In overtime?", compute="_is_overtime")
+
+    coach_share = fields.Float(string="Coach's Share", compute="_compute_coach_share")
+    coach_schedule = fields.One2many(
+        related="membership_id.coach_id.schedule_ids", string="Coach's Schedule"
+    )
+
+    @api.depends("is_overtime")
+    def _compute_coach_share(self):
+        for record in self:
+            if record.is_overtime:
+                record.coach_share = record.session_price * 0.4
+            else:
+                record.coach_share = record.session_price * 0.3
+
+    @api.onchange("session_start_time", "coach_id")
+    def _debug_coach_schedule(self):
+        """Debug method to check coach schedule access"""
+        if not self.coach_id or not self.session_start_time:
+            return
+
+        # Convert UTC to local time for debugging
+        user_tz_name = self.env.user.tz or "UTC"
+        user_tz = pytz.timezone(user_tz_name)
+        session_utc = pytz.utc.localize(self.session_start_time)
+        session_local = session_utc.astimezone(user_tz)
+
+        print(f"Coach: {self.coach_id.name}")
+        print(f"User timezone: {user_tz_name}")
+        print(f"Session time (UTC): {self.session_start_time}")
+        print(f"Session time (Local): {session_local}")
+        print(f"Local hour: {session_local.hour + session_local.minute / 60.0}")
+        print(f"UTC offset: {session_local.strftime('%z')}")
+
+        schedule = self.coach_id.schedule_ids
+        if schedule:
+            for day in schedule:
+                print(f"  {day.day_of_week}: {day.time_from} - {day.time_to}")
+        else:
+            print("No schedule found")
+
+    @api.depends("session_start_time", "coach_id", "coach_id.schedule_ids")
+    def _is_overtime(self):
+        for record in self:
+            record.is_overtime = False
+
+            if not record.coach_id or not record.session_start_time:
+                continue
+
+            # Convert UTC time to user's local timezone
+            # Temporary fix: hardcode GMT+2 timezone
+            user_tz = pytz.timezone("Africa/Cairo")  # GMT+2 timezone
+            # user_tz = pytz.timezone(self.env.user.tz or "UTC")
+            session_datetime_utc = pytz.utc.localize(record.session_start_time)
+            session_datetime_local = session_datetime_utc.astimezone(user_tz)
+
+            # Get session day and time in local timezone
+            session_weekday = session_datetime_local.weekday()  # 0=Monday, 6=Sunday
+            session_hour = (
+                session_datetime_local.hour + session_datetime_local.minute / 60.0
+            )
+
+            # Convert Python weekday to our day names
+            day_names = [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday",
+            ]
+            session_day = day_names[session_weekday]
+
+            # Find coach's schedule for this day
+            coach_schedule = record.coach_id.schedule_ids.filtered(
+                lambda s: s.day_of_week == session_day
+            )
+
+            if not coach_schedule:
+                record.is_overtime = True  # No schedule for this day = overtime
+            else:
+                # Check if session time is within coach's working hours
+                schedule = coach_schedule[0]  # Take first matching schedule
+                if session_hour < schedule.time_from or session_hour > schedule.time_to:
+                    record.is_overtime = True
 
     @api.depends("membership_id")
     def _set_membership_data(self):
@@ -87,25 +171,12 @@ class Session(models.Model):
             else:
                 record.session_title = ""
 
-    @api.depends("session_start_time", "session_end_time")
-    def _compute_session_duration(self):
-        for record in self:
-            record.session_duration = (
-                record.session_end_time - record.session_start_time
-            ).total_seconds() / 3600.0
-
-    @api.constrains("session_duration")
-    def _session_duration_cap(self):
-        for record in self:
-            if record.session_duration > 4:
-                raise ValidationError("Session cannot be more than 4 hours!")
-
-    @api.depends(
-        "session_start_time",
-        "session_end_time",
-        "coach_id",
-        "coach_id.schedule_ids",
-    )
+    # @api.depends(
+    #     "session_start_time",
+    #     "session_end_time",
+    #     "coach_id",
+    #     "coach_id.schedule_ids",
+    # )
     # def _compute_session_cost(self):
     #     for record in self:
     #         # Default values
@@ -181,8 +252,8 @@ class Session(models.Model):
             ):
                 raise ValidationError("Session time cannot be in the Past")
 
-    @api.constrains("session_start_time", "session_end_time")
+    @api.constrains("session_start_time")
     def _check_time_validity(self):
         for record in self:
-            if record.session_start_time >= record.session_end_time:
-                raise ValidationError("End time must be after start time!")
+            if record.session_start_time < fields.Datetime.now():
+                raise ValidationError("Session Cannot Start In The Past!")

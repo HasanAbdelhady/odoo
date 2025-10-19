@@ -63,6 +63,8 @@ class Appointment(models.Model):
     )
     hide_sales_price = fields.Boolean(string="Hide sales price")
 
+    operation_id = fields.Many2one("hospital.operation", string="Operation")
+
     # override deletion behaviour
     def unlink(self):
         for record in self:
