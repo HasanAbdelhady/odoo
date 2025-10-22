@@ -10,8 +10,12 @@ class Session(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _rec_name = "session_title"
 
+    name = fields.Char(string="Session Name", required=True)
     membership_id = fields.Many2one(
-        comodel_name="gym.membership", string="Membership", default=None
+        comodel_name="gym.membership",
+        string="Membership",
+        default=None,
+        ondelete="cascade",
     )
 
     # Coach Fields
@@ -65,6 +69,15 @@ class Session(models.Model):
     coach_schedule = fields.One2many(
         related="membership_id.coach_id.schedule_ids", string="Coach's Schedule"
     )
+
+    @api.constrains("membership_id")
+    def _check_sessions_remaining(self):
+        for record in self:
+            membership = record.membership_id
+            if membership and membership.sessions_remaining <= 0:
+                raise ValidationError(
+                    f"Cannot create a new session: {membership.name} has no sessions remaining!"
+                )
 
     @api.depends("is_overtime")
     def _compute_coach_share(self):
@@ -171,6 +184,20 @@ class Session(models.Model):
             else:
                 record.session_title = ""
 
+    @api.constrains("session_start_time")
+    def _check_session_time_validity(self):
+        for record in self:
+            if record.session_start_time < datetime.combine(
+                date.today(), datetime.min.time()
+            ):
+                raise ValidationError("Session time cannot be in the Past")
+
+    @api.constrains("session_start_time")
+    def _check_time_validity(self):
+        for record in self:
+            if record.session_start_time < fields.Datetime.now():
+                raise ValidationError("Session Cannot Start In The Past!")
+
     # @api.depends(
     #     "session_start_time",
     #     "session_end_time",
@@ -243,17 +270,3 @@ class Session(models.Model):
     #             normal_hours = 0
     #             overtime_hours = session_duration
     #             record.out_time = True
-
-    @api.constrains("session_start_time")
-    def _check_session_time_validity(self):
-        for record in self:
-            if record.session_start_time < datetime.combine(
-                date.today(), datetime.min.time()
-            ):
-                raise ValidationError("Session time cannot be in the Past")
-
-    @api.constrains("session_start_time")
-    def _check_time_validity(self):
-        for record in self:
-            if record.session_start_time < fields.Datetime.now():
-                raise ValidationError("Session Cannot Start In The Past!")

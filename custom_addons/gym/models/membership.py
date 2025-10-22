@@ -37,10 +37,6 @@ class Membership(models.Model):
 
     expiry_date = fields.Date()
 
-    sessions_purchased = fields.Integer(related="product_id.session_count")
-    sessions_used = fields.Integer(compute="_compute_sessions_used")
-    sessions_remaining = fields.Integer(compute="_compute_sessions_remaining")
-
     session_price = fields.Float(
         related="product_id.session_price", string="Session Price"
     )
@@ -48,18 +44,32 @@ class Membership(models.Model):
         related="product_id.total_memebership_price", string="Membership Price"
     )
 
+    sessions_purchased = fields.Integer(related="product_id.session_count")
+    sessions_used = fields.Integer(compute="_compute_sessions_used", readonly=True)
+    sessions_remaining = fields.Integer(
+        compute="_compute_sessions_remaining", readonly=True
+    )
+
+    session_ids = fields.One2many(
+        "gym.session", "membership_id", string="Sessions", readonly=True
+    )
+
+    @api.depends("sessions_remaining")
     def _set_membership_name(self):
         for record in self:
             if record.product_id and record.trainee_id and record.coach_id:
-                record.name = f"Trainee: {record.trainee_id.name} - Coach: {record.coach_id.name} ({record.product_id.name})"
+                record.name = f"Trainee: {record.trainee_id.name} - Coach: {record.coach_id.name} ({record.product_id.name})[{max(0,record.sessions_remaining)} left]"
             else:
                 record.name = ""
 
-    @api.depends("product_id")  # Add this method
+    @api.depends("session_ids")  # Add this method
     def _compute_sessions_used(self):
         for record in self:
-            # For now, just set to 0 - you can implement session counting later
-            record.sessions_used = 0
+            count = 0
+            for _ in record.session_ids:
+                count += 1
+
+            record.sessions_used = count
 
     @api.depends("sessions_purchased", "sessions_used")  # Add this method
     def _compute_sessions_remaining(self):

@@ -5,5 +5,5 @@
   <menuitem action="gym_trainee_action" id="menu_gym_trainee" name="Trainee" parent="menu_gym_root" sequence="1"/>
   <menuitem action="gym_membership_action" id="menu_gym_membership" name="Memberships" parent="menu_gym_root" sequence="2"/>
   <menuitem action="gym_session_action" id="menu_gym_session" name="Sessions" parent="menu_gym_root" sequence="3"/>
-  <menuitem action="action_gym_session_products" id="menu_gym_membership_product" name="Membership Plans" parent="menu_gym_root" sequence="4"/>
+  <menuitem action="action_gym_session_products" id="menu_gym_membership_product" name="Create Membership" parent="menu_gym_root" sequence="4"/>
 </odoo>

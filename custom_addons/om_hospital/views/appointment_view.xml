@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <!-- appointment Tree View -->
+  <record id="action_mark_as_done" model="ir.actions.server">
+    <field name="name">Mark as Done</field>
+    <field name="type">ir.actions.server</field>
+    <field name="model_id" ref="om_hospital.model_hospital_appointment"/>
+    <field name="binding_model_id" ref="om_hospital.model_hospital_appointment"/>
+    <field name="binding_view_types">list</field>
+    <field name="state">code</field>
+    <field name="code"><![CDATA[
+for record in records:
+    if record.status == "in_consultation":
+        record.done()
+]]></field>
+  </record>
   <record id="om_hospital_appointment_list_view" model="ir.ui.view">
     <field name="name">hospital.appointment.list</field>
     <field name="model">hospital.appointment</field>
@@ -44,6 +57,7 @@
           <button class="oe_highlight" data-hotkey="d" invisible="status != 'in_consultation'" name="done" string="Done" type="object"/>
           <!-- context="{'default_appointment_id': id}" -->
           <button class="btn btn-danger" context="{'default_reason':'dk lol', 'hide_appointment': 1 }" invisible="status == 'cancelled'" name="%(om_hospital.wizard_cancel_appointment_action)d" string="Cancel Appointment" type="action"/>
+          <button class="oe_highlight" icon="fa-whatsapp" name="action_share_whatsapp" string="Share in Whastapp" type="object"/>
           <!-- <button class="btn btn-danger" invisible="status == 'cancelled'" name="cancel_appointment" string="Cancel Appointment" type="object"/> -->
           <field name="status" nolabel="1" statusbar_visible="draft, in_consultation, done" widget="statusbar"/>
         </header>

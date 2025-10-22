@@ -30,7 +30,7 @@
           </header>
           <group>
             <group>
-              <field name="product_id" context="{'form_view_ref': 'gym.product_template_gym_only_form'}"/>
+              <field context="{'form_view_ref': 'product_template_form_view_gym'}" name="product_id"/>
               <field name="purchase_date"/>
               <field name="expiry_date"/>
               <field name="coach_id"/>
@@ -43,7 +43,32 @@
               <field name="trainee_phone" string="Trainee Phone"/>
               <field name="membership_price"/>
             </group>
+            <group>
+              <field name="sessions_used"/>
+              <field name="sessions_remaining"/>
+            </group>
           </group>
+          <notebook>
+            <page name="sessions" string="Sessions">
+              <field name="session_ids" readonl="1">
+                <list>
+                  <field name="coach_name"/>
+                  <field name="trainee_name"/>
+                  <field name="session_start_time"/>
+                  <field name="session_price"/>
+                </list>
+                <form string="Session">
+                  <group>
+                    <field name="coach_name"/>
+                    <field name="trainee_name"/>
+                    <field name="session_start_time"/>
+                    <field name="session_price"/>
+                    <field invisible="1" name="membership_id"/>
+                  </group>
+                </form>
+              </field>
+            </page>
+          </notebook>
         </sheet>
         <chatter/>
       </form>

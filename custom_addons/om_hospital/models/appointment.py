@@ -1,5 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from urllib.parse import quote
+from odoo.exceptions import UserError
 
 
 class Appointment(models.Model):
@@ -12,7 +14,7 @@ class Appointment(models.Model):
         comodel_name="hospital.patient",
         string="Patient",
         required=True,
-        tracking=True,
+        tracking=1,
     )
     # patient_name = fields.Char(
     #     related="patient_id.name",
@@ -22,13 +24,13 @@ class Appointment(models.Model):
         default=fields.Datetime.now,
         string="Appointment Time",
         required=True,
-        tracking=True,
+        tracking=2,
     )
     booking_date = fields.Date(
         default=fields.Date.context_today,
         string="Booking Date",
         required=True,
-        tracking=True,
+        tracking=3,
     )
 
     # readonly is True by deafult, it takes its value from gender_id.gender
@@ -41,7 +43,7 @@ class Appointment(models.Model):
     priority = fields.Selection(
         [("0", "Normal"), ("1", "Low"), ("2", "Medium"), ("3", "High")],
         string="Priority",
-        tracking=True,
+        tracking=4,
     )
     status = fields.Selection(
         [
@@ -64,6 +66,28 @@ class Appointment(models.Model):
     hide_sales_price = fields.Boolean(string="Hide sales price")
 
     operation_id = fields.Many2one("hospital.operation", string="Operation")
+
+    def action_share_whatsapp(self):
+        if not self.patient_id.phone:
+            raise UserError("This patient has no phone number.")
+
+        phone = self.patient_id.phone.replace("+", "").replace(" ", "")
+
+        msg = (
+            f"*Hello {self.patient_id.name}!* 👋\n\n"
+            "This is a reminder from *Om Hospital 🏥*.\n"
+            "We hope you're doing well!\n\n"
+            "_Please contact us if you’d like to confirm or update your appointment._\n\n"
+            "💚 Wishing you good health!"
+        )
+
+        encoded_msg = quote(msg)
+        whatsapp_api_url = f"https://wa.me/{phone}?text={encoded_msg}"
+        return {
+            "type": "ir.actions.act_url",
+            "target": "new",
+            "url": whatsapp_api_url,
+        }
 
     # override deletion behaviour
     def unlink(self):

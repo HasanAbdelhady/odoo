@@ -80,9 +80,14 @@ class Patient(models.Model):
     @api.depends("appointment_ids")
     def _count_appointments(self):
         for record in self:
-            record.appointment_count = self.env["hospital.appointment"].search_count(
-                [("patient_id", "=", record.id)]
+            appointment_group = record.env["hospital.appointment"].read_group(
+                domain=[("patient_id", "=", record.id)],
+                fields=["patient_id"],
+                groupby=["patient_id"],
             )
+            print(f"Appointment Group {appointment_group}")
+
+            record.appointment_count = int(appointment_group[0]["patient_id_count"])
 
     @api.depends("name", "ref")
     def _compute_display_name(self):
@@ -153,6 +158,17 @@ class Patient(models.Model):
                 ("ref", operator, name),
             ]
         return super().name_search(name, args, operator, limit)
+
+    def action_view_appointments(self):
+        return {
+            "name": ("Appointments"),
+            "res_model": "hospital.appointment",
+            "view_mode": "list,kanban",
+            "context": {"default_patient_id": self.id},
+            "domain": [("patient_id", "=", self.id)],
+            "target": "current",
+            "type": "ir.actions.act_window",
+        }
 
     # @api.constrains("age_years", "age_months", "age_days")
     # def _check_age_not_zero(self):

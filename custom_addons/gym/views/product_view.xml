@@ -1,47 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <!-- Product Template Form View - Add Gym Session Fields  -->
+  <!-- Extend Product Template Form View -->
   <record id="product_template_form_view_gym" model="ir.ui.view">
     <field name="name">product.template.form.gym</field>
     <field name="model">product.template</field>
     <field name="inherit_id" ref="product.product_template_only_form_view"/>
     <field name="arch" type="xml">
+      <!-- Add Gym Membership toggle -->
       <xpath expr="//field[@name='type']" position="after">
         <field name="is_gym_membership" string="Gym Membership?"/>
       </xpath>
-    </field>
-  </record>
-  <!-- Simplified Form View for Gym Session Products Only -->
-  <record id="product_template_gym_only_form" model="ir.ui.view">
-    <field name="name">product.template.gym.only.form</field>
-    <field name="model">product.template</field>
-    <field name="priority">20</field>
-    <field name="arch" type="xml">
-      <form string="Gym Memberhsip Product">
-        <sheet>
-          <div class="oe_title">
-            <label for="name" string="Membership Name"/>
-            <h1>
-              <field name="name" placeholder="e.g. Personal Training Session"/>
-            </h1>
-          </div>
+      <!-- Add new Gym Membership tab -->
+      <xpath expr="//sheet/notebook" position="inside">
+        <page modifiers="{'invisible': [('is_gym_membership', '=', False)]}" string="Gym Membership">
           <group>
             <group string="Session Configuration">
-              <field invisible="1" name="is_gym_membership"/>
+              <!-- <field invisible="1" name="is_gym_membership"/> -->
               <field name="session_count" required="1" widget="float_time"/>
               <field name="session_duration" required="1" widget="float_time"/>
             </group>
             <group string="Pricing">
               <field name="list_price" required="1" string="Price per Hour"/>
               <separator colspan="2" string="Calculated Prices"/>
-              <div class="o_row"><span class="o_form_label">Standard Rate:</span><span>
+              <div class="o_row"><span class="o_form_label">Standard Rate:</span> <span>
                   <field name="list_price" nolabel="1" options="{'currency_field': 'currency_id'}" readonly="1" widget="monetary"/>
                 </span>/hour</div>
               <field name="total_memebership_price"/>
             </group>
           </group>
-        </sheet>
-      </form>
+        </page>
+      </xpath>
     </field>
   </record>
   <!-- Action for Gym Session Products -->
@@ -49,9 +37,9 @@
     <field name="name">Session Products</field>
     <field name="res_model">product.template</field>
     <field name="view_mode">form</field>
-    <field name="view_id" ref="product_template_gym_only_form"/>
+    <field name="view_id" ref="product_template_form_view_gym"/>
     <field name="domain">[('is_gym_membership', '=', True)]</field>
-    <field name="context">{'default_is_gym_membership':True ,'default_type': 'service', 'default_sale_ok': True, 'default_purchase_ok': False }</field>
+    <field name="context">{ 'default_is_gym_membership': True, 'default_type': 'service', 'default_sale_ok': True, 'default_purchase_ok': False }</field>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">Create your first gym session product!</p>
       <p>Session products define the pricing and trainer compensation for different types of sessions.</p>

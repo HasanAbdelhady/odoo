@@ -7,10 +7,10 @@
     <field name="arch" type="xml">
       <list multi_edit="1" sample="1">
         <field name="session_title"/>
-        <field name="coach_id"/>
+        <field name="coach_name"/>
         <field name="coach_image" options="{'size': [50, 50]}" string="Coach Photo" widget="image"/>
         <field name="coach_phone" string="Coach Phone"/>
-        <field name="trainee_id"/>
+        <field name="trainee_name"/>
         <field name="trainee_image" options="{'size': [50, 50]}" string="Trainee Photo" widget="image"/>
         <field name="trainee_phone" string="Trainee Phone"/>
         <field name="session_start_time" string="Session Start Time"/>
