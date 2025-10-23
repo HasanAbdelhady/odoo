@@ -20,6 +20,7 @@ Long description of module's purpose
         # 'security/ir.model.access.csv',
         "views/sale_order_view.xml",
         "views/views.xml",
+        "views/account_move_view.xml",
         "views/templates.xml",
     ],
     # only loaded in demonstration mode
