@@ -82,6 +82,7 @@ class Appointment(models.Model):
         )
 
         encoded_msg = quote(msg)
+        self.message_post(body=msg, subject="Whatsapp Message")
         whatsapp_api_url = f"https://wa.me/{phone}?text={encoded_msg}"
         return {
             "type": "ir.actions.act_url",
