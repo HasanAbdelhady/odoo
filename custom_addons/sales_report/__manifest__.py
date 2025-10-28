@@ -1,0 +1,20 @@
+{
+    "name": "Sales Report",
+    "version": "1.0.1",
+    "category": "Sales",
+    "description": "Sales Report",
+    "sequence": -112,
+    "depends": ["product", "sale"],
+    "data": [
+        "wizard/sales_report_view.xml",
+        "security/ir.model.access.csv",
+        "views/menu.xml",
+        "report/report_sales_summary.xml",
+        "report/sales_report_action.xml",
+    ],
+    "demo": [],
+    "application": True,
+    "installable": True,
+    "auto_install": False,
+    "license": "LGPL-3",
+}
