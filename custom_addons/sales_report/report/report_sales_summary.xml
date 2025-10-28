@@ -2,73 +2,160 @@
   <template id="report_sales_summary">
     <t t-call="web.html_container">
       <t t-as="doc" t-foreach="docs">
-        <div class="page">
-          <h2>Sales Report</h2>
-          <p>From <t t-esc="doc.start_date"/> to <t t-esc="doc.end_date"/></p>
-          <h3>Most Sold Products</h3>
-          <table class="table table-sm">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Quantity Sold</th>
-              </tr>
-            </thead>
-            <tbody>
-              <t t-as="line" t-foreach="doc.get_most_sold_products()">
+        <t t-call="web.external_layout">
+          <div class="page">
+            <!-- Header Section -->
+            <div class="text-center mb-4">
+              <h1 class="mb-3" style="color: #2c3e50; font-weight: 600;">Sales Performance Report</h1>
+              <p class="text-muted" style="font-size: 14px;"><strong>Period:</strong> <span t-field="doc.start_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/> — <span t-field="doc.end_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/></p>
+            </div>
+            <!-- Most Sold Products Section -->
+            <div class="mb-4">
+              <div style="background-color: #28a745; color: white; padding: 8px 12px; margin-bottom: 0;">
+                <h4 class="mb-0" style="font-size: 16px;"><i class="fa fa-trophy mr-2"/>Top Best Selling Products</h4>
+              </div>
+              <table class="table table-sm table-bordered" style="width: 100%; margin-bottom: 0;">
+                <thead style="background-color: #f8f9fa;">
+                  <tr>
+                    <th style="width: 8%; text-align: center;">#</th>
+                    <th style="width: 67%; text-align: left;">Product Name</th>
+                    <th style="width: 25%; text-align: right;">Quantity Sold</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <t t-as="line" t-foreach="doc.get_most_sold_products()">
+                    <tr>
+                      <td style="text-align: center;">
+                        <strong t-esc="line_index + 1"/>
+                      </td>
+                      <td style="text-align: left;">
+                        <span t-esc="line['product']"/>
+                      </td>
+                      <td style="text-align: right;"><t t-esc="int(line['quantity'])"/> units</td>
+                    </tr>
+                  </t>
+                  <t t-if="not doc.get_most_sold_products()">
+                    <tr>
+                      <td colspan="3" style="text-align: center; color: #6c757d; padding: 15px;">No sales data available for this period</td>
+                    </tr>
+                  </t>
+                </tbody>
+              </table>
+            </div>
+            <!-- Least Sold Products Section -->
+            <div class="mb-4">
+              <div style="background-color: #ffc107; color: #212529; padding: 8px 12px; margin-bottom: 0;">
+                <h4 class="mb-0" style="font-size: 16px;"><i class="fa fa-arrow-down mr-2"/>Top Least Selling Products</h4>
+              </div>
+              <table class="table table-sm table-bordered" style="width: 100%; margin-bottom: 0;">
+                <thead style="background-color: #f8f9fa;">
+                  <tr>
+                    <th style="width: 8%; text-align: center;">#</th>
+                    <th style="width: 67%; text-align: left;">Product Name</th>
+                    <th style="width: 25%; text-align: right;">Quantity Sold</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <t t-as="line" t-foreach="doc.get_least_sold_products()">
+                    <tr>
+                      <td style="text-align: center;">
+                        <strong t-esc="line_index + 1"/>
+                      </td>
+                      <td style="text-align: left;">
+                        <span t-esc="line['product']"/>
+                      </td>
+                      <td style="text-align: right;"><t t-esc="int(line['quantity'])"/> units</td>
+                    </tr>
+                  </t>
+                  <t t-if="not doc.get_least_sold_products()">
+                    <tr>
+                      <td colspan="3" style="text-align: center; color: #6c757d; padding: 15px;">No sales data available for this period</td>
+                    </tr>
+                  </t>
+                </tbody>
+              </table>
+            </div>
+            <!-- Top Salespeople Section -->
+            <br/>
+            <div class="mb-4">
+              <div style="background-color: #007bff; color: white; padding: 8px 12px; margin-bottom: 0;">
+                <h4 class="mb-0" style="font-size: 16px;"><i class="fa fa-users mr-2"/>Top Performing Salespeople</h4>
+              </div>
+              <table class="table table-sm table-bordered" style="width: 100%; margin-bottom: 0;">
+                <thead style="background-color: #f8f9fa;">
+                  <tr>
+                    <th style="width: 8%; text-align: center;">#</th>
+                    <th style="width: 52%; text-align: left;">Salesperson</th>
+                    <th style="width: 40%; text-align: right;">Total Sales</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <t t-as="line" t-foreach="doc.get_top_salespeople()">
+                    <tr>
+                      <td style="text-align: center;">
+                        <strong t-esc="line_index + 1"/>
+                      </td>
+                      <td style="text-align: left;">
+                        <span t-esc="line['user']"/>
+                      </td>
+                      <td style="text-align: right;">
+                        <span t-esc="line['total']" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.env.company.currency_id}"/>
+                      </td>
+                    </tr>
+                  </t>
+                  <t t-if="not doc.get_top_salespeople()">
+                    <tr>
+                      <td colspan="3" style="text-align: center; color: #6c757d; padding: 15px;">No sales data available for this period</td>
+                    </tr>
+                  </t>
+                </tbody>
+              </table>
+            </div>
+            <!-- Footer Note -->
+            <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e9ecef;">
+              <p style="color: #6c757d; font-size: 11px; margin: 0;"><i class="fa fa-calendar mr-1"/> Generated on <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%B %d, %Y at %H:%M')"/></p>
+            </div>
+          </div>
+          <!-- Top Customers -->
+          <div class="mb-4">
+            <div style="background-color: #007bff; color: white; padding: 8px 12px; margin-bottom: 0;">
+              <h4 class="mb-0" style="font-size: 16px;"><i class="fa fa-users mr-2"/>Top Customers</h4>
+            </div>
+            <table class="table table-sm table-bordered" style="width: 100%; margin-bottom: 0;">
+              <thead style="background-color: #f8f9fa;">
                 <tr>
-                  <td>
-                    <t t-esc="line['product']"/>
-                  </td>
-                  <td>
-                    <t t-esc="line['quantity']"/>
-                  </td>
+                  <th style="width: 8%; text-align: center;">#</th>
+                  <th style="width: 52%; text-align: left;">Customers</th>
+                  <th style="width: 40%; text-align: right;">Total Num Orders</th>
                 </tr>
-              </t>
-            </tbody>
-          </table>
-          <h3>Least Sold Products</h3>
-          <table class="table table-sm">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Quantity Sold</th>
-              </tr>
-            </thead>
-            <tbody>
-              <t t-as="line" t-foreach="doc.get_least_sold_products()">
-                <tr>
-                  <td>
-                    <t t-esc="line['product']"/>
-                  </td>
-                  <td>
-                    <t t-esc="line['quantity']"/>
-                  </td>
-                </tr>
-              </t>
-            </tbody>
-          </table>
-          <h3>Top Salespeople</h3>
-          <table class="table table-sm">
-            <thead>
-              <tr>
-                <th>Salesperson</th>
-                <th>Total Sales</th>
-              </tr>
-            </thead>
-            <tbody>
-              <t t-as="line" t-foreach="doc.get_top_salespeople()">
-                <tr>
-                  <td>
-                    <t t-esc="line['user']"/>
-                  </td>
-                  <td>
-                    <t t-esc="line['total']"/>
-                  </td>
-                </tr>
-              </t>
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                <t t-as="line" t-foreach="doc.get_most_buying_customers()">
+                  <tr>
+                    <td style="text-align: center;">
+                      <strong t-esc="line_index + 1"/>
+                    </td>
+                    <td style="text-align: left;">
+                      <span t-esc="line['customer']"/>
+                    </td>
+                    <td style="text-align: right;">
+                      <span t-esc="line['num_of_orders']" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.env.company.currency_id}"/>
+                    </td>
+                  </tr>
+                </t>
+                <t t-if="not doc.get_most_buying_customers()">
+                  <tr>
+                    <td colspan="3" style="text-align: center; color: #6c757d; padding: 15px;">No Customer data available for this period</td>
+                  </tr>
+                </t>
+              </tbody>
+            </table>
+          </div>
+          <!-- Footer Note -->
+          <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e9ecef;">
+            <p style="color: #6c757d; font-size: 11px; margin: 0;"><i class="fa fa-calendar mr-1"/> Generated on <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%B %d, %Y at %H:%M')"/></p>
+          </div>
+        </t>
       </t>
     </t>
   </template>

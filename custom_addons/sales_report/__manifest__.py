@@ -6,8 +6,8 @@
     "sequence": -112,
     "depends": ["product", "sale"],
     "data": [
-        "wizard/sales_report_view.xml",
         "security/ir.model.access.csv",
+        "wizard/sales_report_view.xml",
         "views/menu.xml",
         "report/report_sales_summary.xml",
         "report/sales_report_action.xml",
