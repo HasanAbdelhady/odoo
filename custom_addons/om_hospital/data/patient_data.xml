@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <record id="patient_soliman" model="hospital.patient">
-    <field name="name">Soliman</field>
-  </record>
+  <!-- <record id="patient_soliman" model="hospital.patient"> -->
+  <!--   <field name="name">Soliman</field> -->
+  <!-- </record> -->
 </odoo>
